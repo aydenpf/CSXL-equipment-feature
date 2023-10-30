@@ -42,8 +42,10 @@ https://www.figma.com/file/XbX6hfwGJLQTOl0MLk5SVY/590-Final-Project?type=design&
 
 3. Add a checkout model. Add an equipment model. Change User model to have certain permissions/data associated with checkouts.
 
+4. The application will need to use new API for creating and getting checkout models. This would require GET, POST, and PUSH HTTP methods. We do not forsee needing to modify existing API.
+
 5. There exists multiple concerns regarding security and privacy of data based on a user's role. These are defined as follows:
 
 <ins>Sally Student:</ins> When checking out equipment, Sally student will have access to all available resources. All equipment already checked out or under repair shall be kept private from a student's access. Upon checking out equipment, only Sally Student will be able to access her resource, all other students will not have access to that data.
-Sally Student will not have access to oversight of checking in/out equipment, only the ability to request a checkout.
+Sally Student will not have access to oversight of checking in/out equipment, only the ability to request a checkout.\
 <ins>Amy Ambassador:</ins> Amy Ambassador must have privilege to check in/out student equipment. She will have access to see a list of all current reservations, as this data is kept private from student roles. Amy Ambassador should have the ability to 'remove' equipment that has been damaged upon return, so write capabilities to the backend database may be necessary. Student's will only have read capabilities. Amy Ambassador will also have permission to 'turn off' students' access to reserve equipment if they are not respectful of the equipment, whether that be through damages, late return, etc.
