@@ -22,8 +22,12 @@ class EquipmentEntity(EntityBase):
     equipment_id: Mapped[int] = mapped_column(Integer, unique=True, index=True)
     # Name of the model of the item ex. Meta Quest 3
     model: Mapped[str] = mapped_column(String(64))
+    # Image to represent the item
+    equipment_image: Mapped[str] = mapped_column(String)
     # Shows if item is currently checked out
     is_checked_out: Mapped[bool] = mapped_column(Boolean)
+    # Shows the current condition of the item
+    condition: Mapped[int] = mapped_column(Integer)
     # Notes on how the condition of the item has changed throughout checkouts
     # TODO
     # List of the PIDs of students who have checkout out this item
@@ -43,7 +47,9 @@ class EquipmentEntity(EntityBase):
         return cls(
             equipment_id=model.equipment_id,
             model=model.model,
+            equipment_image=model.equipment_image,
             is_checked_out=model.is_checked_out,
+            condition=model.condition
         )
 
     def to_model(self) -> Equipment:
@@ -56,7 +62,9 @@ class EquipmentEntity(EntityBase):
         return Equipment(
             equipment_id=self.equipment_id,
             model=self.model,
+            equipment_image=self.equipment_image,
             is_checked_out=self.is_checked_out,
+            condition=self.condition,
         )
 
     def update(self, model: Equipment) -> None:
@@ -69,6 +77,9 @@ class EquipmentEntity(EntityBase):
         Returns:
             None
         """
-        self.equipment_id = model.equipment_id
+        if (model.equipment_id != self.equipment_id):
+            raise ReferenceError("Failed to update Equipment Entity because model id did not match entity id.")
+        
         self.model = model.model
+        self.equipment_image = model.equipment_image
         self.is_checked_out = model.is_checked_out

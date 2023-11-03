@@ -17,6 +17,7 @@ class Equipment(BaseModel):
 
     equipment_id: int
     model: str
+    equipment_image: str
     condition: int = 10
     is_checked_out: bool = False
     # TODO
