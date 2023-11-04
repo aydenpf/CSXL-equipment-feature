@@ -69,7 +69,7 @@ class EquipmentService:
         sets an item as not checked out in the database.
 
         Args:
-            model (Equipment): The model instance check in.
+            model (Equipment): The model instance to check in.
 
         Returns:
             Equipment: the checked in equipment.
@@ -80,6 +80,29 @@ class EquipmentService:
 
         if entity_item:
             entity_item.is_checked_out = False
+
+            self._session.commit()
+            return entity_item.to_model()
+        
+        else:
+            raise EquipmentNotFoundException(item.equipment_id)
+        
+    def update_equipment_condition(self, item: Equipment) -> Equipment:
+        """
+        updates an equipments condition
+
+        Args:
+            model (Equipment): The model instance to update.
+
+        Returns:
+            Equipment: the checked in equipment.
+        """
+
+        #get the item with matching equipment_id from the db
+        entity_item = self._session.get(EquipmentEntity, item.equipment_id)
+
+        if entity_item:
+            entity_item.condition = item.condition
 
             self._session.commit()
             return entity_item.to_model()
