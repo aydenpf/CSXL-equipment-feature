@@ -16,7 +16,7 @@ from .exceptions import EquipmentNotFoundException
 # Excluding this import for now, however, we will need to use in later sprints for handling different types of users
 #from .permission import PermissionService
 
-__authors__ = ["Jacob Brown, Nicholas Mountain"]
+__authors__ = ["Jacob Brown"]
 __copyright__ = "Copyright 2023"
 __license__ = "MIT"
 
@@ -28,7 +28,7 @@ class EquipmentService:
             session: Session = Depends(db_session),
     ):
         """Initialize the session for querying the db."""
-        self._session = session 
+        self._session = session  
 
     def getAll(self) -> list[Equipment]:
         """Return a list of all equipment in the db."""
@@ -40,12 +40,12 @@ class EquipmentService:
         return [result.to_model() for result in query_result]
     
     # TODO: add param for user and save users pid in equipments list of pids and implement permissions
-    def checkout_equipment(self, item: Equipment) -> Equipment:
+    def update(self, item: Equipment) -> Equipment:
         """
-        Checks out a specific item.
+        updates a specific equipment item.
 
         Args:
-            model (Equipment): The model instance check out.
+            model (Equipment): The model to update.
             TODO: model (User): The user that is checking out the equipment.
 
         Returns:
@@ -56,58 +56,44 @@ class EquipmentService:
         entity_item = self._session.get(EquipmentEntity, item.equipment_id)
 
         if entity_item:
-            entity_item.is_checked_out = True
+            entity_item.update(item)
 
             self._session.commit()
             return entity_item.to_model()
         
         else:
             raise EquipmentNotFoundException(item.equipment_id)
+        
+    def add_item(self, item: Equipment) -> Equipment:
+        """
+        Creates a new equipment entity and adds to the data base
+
+        Args:
+            model (Equipment): The model to insert into the db.
+            
+
+        Returns:
+            Equipment: the inserted equipment.
+        """
+
+        entity = EquipmentEntity.from_model(item)
+        self._session.add(entity)
+        self._session.commit()
+        return entity.to_model()
     
-    def return_equipment(self, item: Equipment) -> Equipment:
+    def delete_item(self, item: Equipment) -> Equipment:
         """
-        sets an item as not checked out in the database.
+        Delets an Equipment item from the database
 
         Args:
-            model (Equipment): The model instance to check in.
+            model (Equipment): The model to delete from the db.
+            
 
         Returns:
-            Equipment: the checked in equipment.
+            Equipment: the deleted equipment.
         """
-
-        #get the item with matching equipment_id from the db
-        entity_item = self._session.get(EquipmentEntity, item.equipment_id)
-
-        if entity_item:
-            entity_item.is_checked_out = False
-
-            self._session.commit()
-            return entity_item.to_model()
         
-        else:
-            raise EquipmentNotFoundException(item.equipment_id)
-        
-    def update_equipment_condition(self, item: Equipment) -> Equipment:
-        """
-        updates an equipments condition
-
-        Args:
-            model (Equipment): The model instance to update.
-
-        Returns:
-            Equipment: the checked in equipment.
-        """
-
-        #get the item with matching equipment_id from the db
-        entity_item = self._session.get(EquipmentEntity, item.equipment_id)
-
-        if entity_item:
-            entity_item.condition = item.condition
-
-            self._session.commit()
-            return entity_item.to_model()
-        
-        else:
-            raise EquipmentNotFoundException(item.equipment_id)
-
-        
+        entity = EquipmentEntity.from_model(item)
+        self._session.delete(entity)
+        self._session.commit()
+        return entity.to_model()
