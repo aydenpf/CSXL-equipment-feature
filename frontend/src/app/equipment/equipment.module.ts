@@ -10,3 +10,4 @@ import { MatCardModule } from '@angular/material/card';
   imports: [CommonModule, MatCardModule]
 })
 export class EquipmentModule {}
+export { MatCardModule };

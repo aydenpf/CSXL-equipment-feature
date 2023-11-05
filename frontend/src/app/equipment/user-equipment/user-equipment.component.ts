@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { EquipmentCard } from '../widgets/equipment-card/equipment-card.widget';
+import { MatCardModule } from '../equipment.module';
 
 @Component({
   selector: 'app-user-equipment',
