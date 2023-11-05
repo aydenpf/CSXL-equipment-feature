@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EquipmentCard } from '../widgets/equipment-card/equipment-card.widget';
 
 @Component({
   selector: 'app-user-equipment',
