@@ -18,6 +18,7 @@ def equipment_service(session: Session):
 
 
 def test_getAll(equipment_service: EquipmentService):
+    """Tests that all equipment can be retrieved"""
     equipment_service.add_item(quest_3)
     equipment_service.add_item(arduino)
     fetched_equipment = equipment_service.getAll()
@@ -26,8 +27,3 @@ def test_getAll(equipment_service: EquipmentService):
     assert isinstance(fetched_equipment[0], Equipment)
     assert fetched_equipment[0] == quest_3
     assert fetched_equipment[1] == arduino
-
-
-# def test_add_item(equipment_service: EquipmentService):
-#     item = quest_3
-#     assert equipment_service.add_item(item) == item

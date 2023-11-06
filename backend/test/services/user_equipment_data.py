@@ -32,10 +32,12 @@ arduino = Equipment(
 equipment = [quest_3, arduino]
 
 
+# TODO this stuff is not doing anything yet... it would be good if it did something
 def insert_fake_data(session: Session):
     global equipment
 
     # Create entities for test equipment data
+    print("is this running?")
     entities = []
     for item in equipment:
         entity = EquipmentEntity.from_model(item)
@@ -51,6 +53,7 @@ def insert_fake_data(session: Session):
 
 @pytest.fixture(autouse=True)
 def fake_data_fixture(session: Session):
+    print("helllloooo?")
     insert_fake_data(session)
     session.commit()
     yield
