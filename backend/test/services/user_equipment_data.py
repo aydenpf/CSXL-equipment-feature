@@ -32,7 +32,6 @@ arduino = Equipment(
 equipment = [quest_3, arduino]
 
 
-# TODO this stuff is not doing anything yet... it would be good if it did something
 def insert_fake_data(session: Session):
     global equipment
 
@@ -49,11 +48,3 @@ def insert_fake_data(session: Session):
 
     # Commit all changes
     session.commit()
-
-
-@pytest.fixture(autouse=True)
-def fake_data_fixture(session: Session):
-    print("helllloooo?")
-    insert_fake_data(session)
-    session.commit()
-    yield
