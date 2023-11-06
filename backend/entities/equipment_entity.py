@@ -16,6 +16,10 @@ __license__ = "MIT"
 class EquipmentEntity(EntityBase):
     """Serves as the database model schema defining the shape of the `Equipment` table"""
 
+    # Name for the equipment table in the PostgreSQL database
+
+    __tablename__ = "equipment"
+
     # Unique ID for the equipment entry
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     # Equipment ID of the equipment (should be unique per equipment)
@@ -49,7 +53,7 @@ class EquipmentEntity(EntityBase):
             model=model.model,
             equipment_image=model.equipment_image,
             is_checked_out=model.is_checked_out,
-            condition=model.condition
+            condition=model.condition,
         )
 
     def to_model(self) -> Equipment:
@@ -77,9 +81,11 @@ class EquipmentEntity(EntityBase):
         Returns:
             None
         """
-        if (model.equipment_id != self.equipment_id):
-            raise ReferenceError("Failed to update Equipment Entity because model id did not match entity id.")
-        
+        if model.equipment_id != self.equipment_id:
+            raise ReferenceError(
+                "Failed to update Equipment Entity because model id did not match entity id."
+            )
+
         self.model = model.model
         self.equipment_image = model.equipment_image
         self.is_checked_out = model.is_checked_out
