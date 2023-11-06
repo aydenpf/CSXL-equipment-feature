@@ -1,7 +1,7 @@
 """User model serves as the data object for representing registered users across application layers."""
 
 from pydantic import BaseModel
-from equipment import Equipment
+from backend.models.equipment import Equipment
 
 __authors__ = ["Kris Jordan"]
 __copyright__ = "Copyright 2023"
