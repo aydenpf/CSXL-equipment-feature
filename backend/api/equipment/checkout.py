@@ -23,8 +23,19 @@ openapi_tags = {
 
 
 @api.get("/get_all", tags=["Equipment"])
-def get_all(equipment_service: EquipmentService = Depends()) -> list[Equipment]:
-    """Gets all equipment in the database and returns to the user as a list of equipment models."""
+def get_all(
+    equipment_service: EquipmentService = Depends(),
+) -> list[Equipment]:
+    """
+    Gets all equipment
+
+    Parameters:
+        equipment_service: dependency on 'EquipmentService'
+
+    Returns:
+        List of equipment in the database
+    """
+    
     return equipment_service.get_all()
 
 
@@ -34,14 +45,44 @@ def update(
     equipment_service: EquipmentService = Depends(),
     subject: User = Depends(registered_user),
 ) -> Equipment:
-    """Updates an item of equipment and returns the updated item as an equipment model"""
-    return equipment_service.update(item)
+    """
+    Update an equipment item
+
+    Parameters:
+        item: Item to be updated in the database
+        subject: a valid User model representing the currently logged in User
+        equipmentService: a valid 'EquipmentService'
+
+    Returns:
+        Equipment: the updated Equipment item
+
+    Raises:
+        HTTPException 422 if update() raises an Exception
+    """
+
+    try:
+        # Attempt to update the equipment item.
+        return equipment_service.update(item, subject)
+    except Exception as e:
+        # Raise exception if data incorrectly formatted / not authorized.
+        raise HTTPException(status_code=422, detail=str(e))
 
 
 @api.get("/get_all_types", tags=["Equipment"])
 def get_all_types(
     equipment_service: EquipmentService = Depends(),
-    subject: User = Depends(registered_user),
 ) -> list[EquipmentType]:
-    """Gets all unique equipment types from database with correct available inventory and returns to the user as a list of equipment type models"""
+    """
+    Gets equipment types and the respective number of items of that type.
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+
+    Returns:
+        Organization: Created organization
+
+    Raises:
+        HTTPException 422 if create() raises an Exception
+    """
+
     return equipment_service.get_all_types()
