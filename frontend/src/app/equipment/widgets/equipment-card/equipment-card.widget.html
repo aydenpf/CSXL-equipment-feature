@@ -5,8 +5,10 @@
       >{{ equipmentType.num_available }} available
     </mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image src="{{ equipmentType.equipment_img_URL }}" />
+  <img mat-card-image src="../../../../assets/Oculus-csxl-sp00.png" />
   <mat-card-actions>
-    <button mat-button>Checkout</button>
+    <button mat-button (click)="router.navigateByUrl('equipment/waiver')">
+      Checkout
+    </button>
   </mat-card-actions>
 </mat-card>
