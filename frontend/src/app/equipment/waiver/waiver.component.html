@@ -1,15 +1,34 @@
 <div>
-  <p>waiver works!</p>
-</div>
-<!-- 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-form-field class="example-form-field">
-    <mat-label>Clearable input</mat-label>
-    <input matInput type="text" [(ngModel)]="value">
-    @if (value) {
-    <button matSuffix mat-icon-button aria-label="Clear" (click)="value = ''">
-      <mat-icon>close</mat-icon>
+  <p>waiver</p>
+  <form (ngSubmit)="onSubmit()" myForm="ngForm">
+    <mat-form-field>
+      <mat-label>Signature</mat-label>
+      <input
+        type="Signature"
+        matInput
+        [formControl]="formControl"
+        [errorStateMatcher]="matcher"
+        placeholder="Ex. Sally Student" />
+
+      <!-- Use *ngIf for conditional rendering -->
+      <mat-error *ngIf="formControl.hasError('required')"
+        >Signature is <strong>required</strong></mat-error
+      >
+    </mat-form-field>
+
+    <!-- Use *ngIf for conditional rendering: disabled button if signature field empty,
+    active button if not that routes to checkout complete component -->
+    <button *ngIf="formControl.hasError('required')" mat-flat-button disabled>
+      Agree To Terms
     </button>
-    }
-  </mat-form-field>
-</form> -->
+    <button
+      type="submit"
+      *ngIf="!formControl.hasError('required')"
+      mat-raised-button
+      color="accent"
+      (click)="router.navigateByUrl('equipment')">
+      <!-- TODO: route to checkout complete^^^-->
+      Agree To Terms
+    </button>
+  </form>
+</div>
