@@ -20,6 +20,7 @@ export interface Profile {
   github: string | null;
   github_id: number | null;
   github_avatar: string | null;
+  signed_equipment_waiver: boolean;
 }
 
 /** Interface for UserSummary Type (used on frontend for user requests) */
@@ -32,6 +33,7 @@ export interface UserSummary {
   email: string | null;
   pronouns: string | null;
   permissions: Permission[];
+  signed_equipment_waiver: boolean;
 }
 
 /** Interface for the Role Type */
