@@ -79,6 +79,7 @@ class UserEntity(EntityBase):
             github=model.github,
             github_id=model.github_id,
             github_avatar=model.github_avatar,
+            signed_equipment_wavier=model.signed_equipment_wavier,
         )
 
     def to_model(self) -> User:
@@ -99,6 +100,7 @@ class UserEntity(EntityBase):
             github_id=self.github_id,
             github_avatar=self.github_avatar,
             pronouns=self.pronouns,
+            signed_equipment_wavier=self.signed_equipment_wavier
         )
 
     def update(self, model: User) -> None:
