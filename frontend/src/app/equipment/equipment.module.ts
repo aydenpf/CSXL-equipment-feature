@@ -16,9 +16,15 @@ import { EquipmentRoutingModule } from './equipment-routing.module';
 import { EquipmentService } from './equipment.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { EquipmentCheckoutConfirmationComponent } from './equipment-checkout-confirmation/equipment-checkout-confirmation.component';
 
 @NgModule({
-  declarations: [UserEquipmentComponent, EquipmentCard, WaiverComponent],
+  declarations: [
+    UserEquipmentComponent,
+    EquipmentCard,
+    WaiverComponent,
+    EquipmentCheckoutConfirmationComponent
+  ],
   imports: [
     CommonModule,
     EquipmentRoutingModule,
