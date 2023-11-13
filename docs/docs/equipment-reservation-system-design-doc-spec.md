@@ -7,3 +7,12 @@
 3. At least one technical and one user experience design choice your team weighed the trade-offs with justification for the decision (we chose X over Y, because…)
 
 4. Development concerns: How does a new developer get started on your feature? Brief guide/tour of the files and concerns they need to understand to get up-to-speed.
+
+   Files:
+
+   1. User-equipment component
+      This components shows how many of each type of equipment are currently available for checkout by a user.
+   2. Waiver component
+      This components displays a waiver that a user must agree to before they can checkout.
+   3. Equipment Checkout Complete Component
+      This component displays a message telling a user to see an ambassador in order to finish the equipment checkout.
