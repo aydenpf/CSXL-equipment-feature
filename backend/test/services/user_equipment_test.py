@@ -47,9 +47,7 @@ def test_update(equipment_service: EquipmentService):
         condition=8,
         is_checked_out=True,
     )
-    equipment_service._permission = create_autospec(
-        equipment_service._permission
-    )
+    equipment_service._permission = create_autospec(equipment_service._permission)
 
     update = equipment_service.update(changed_item, ambassador)
 
@@ -60,6 +58,7 @@ def test_update(equipment_service: EquipmentService):
     assert isinstance(update, Equipment)
     assert update == changed_item
 
+
 def test_update_not_authorized(equipment_service: EquipmentService):
     """Tests that an item cannot be updated when the user does not have ambassador permissions"""
     changed_item = Equipment(
@@ -69,10 +68,11 @@ def test_update_not_authorized(equipment_service: EquipmentService):
         condition=8,
         is_checked_out=True,
     )
-    with pytest.raises(Exception) as e: 
+    with pytest.raises(Exception) as e:
         equipment_service.update(changed_item, user)
-        # Fail test if no exception is thrown 
+        # Fail test if no exception is thrown
         pytest.fail()
+
 
 def test_get_all_equipment_is_correct(equipment_service: EquipmentService):
     """Tests that when all equipment is retrieved the fields are still correct"""
@@ -105,16 +105,14 @@ def test_get_all_types_when_zero_available(equipment_service: EquipmentService):
         condition=8,
         is_checked_out=True,
     )
-    equipment_service._permission = create_autospec(
-        equipment_service._permission
-    )
+    equipment_service._permission = create_autospec(equipment_service._permission)
 
     update = equipment_service.update(changed_item, ambassador)
 
     equipment_service._permission.enforce.assert_called_with(
         ambassador, "equipment.update", "equipment"
     )
-    
+
     _ = equipment_service.update(changed_item, ambassador)
 
     fetched_equipment_types = equipment_service.get_all_types()
