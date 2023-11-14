@@ -84,6 +84,28 @@ def test_update_not_authorized(equipment_service: EquipmentService):
         # Fail test if no exception is thrown
         pytest.fail()
 
+def test_update_equipment_not_in_db(equipment_service: EquipmentService):
+    """Tests that an error is thrown when the update method is called on an item that is not in the database."""
+    changed_item = Equipment(
+        equipment_id=100,
+        model="Ipod Nano",
+        equipment_image="placeholder",
+        condition=6,
+        is_checked_out=True,
+    )
+
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    with pytest.raises(Exception) as e:
+        # Call update method with data that is not in the database.
+        update = equipment_service.update(changed_item, ambassador)
+
+        equipment_service._permission.enforce.assert_called_with(
+            ambassador, "equipment.update", "equipment"
+        )
+
+        # Fail test if no exception is raised
+
 
 def test_get_all_equipment_is_correct(equipment_service: EquipmentService):
     """Tests that when all equipment is retrieved the fields are still correct"""
