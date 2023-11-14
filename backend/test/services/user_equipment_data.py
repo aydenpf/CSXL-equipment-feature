@@ -77,7 +77,7 @@ quest_3_two = Equipment(
 )
 
 ambassador_permission_equipment = Permission(
-    id=1, action="equipment.update", resource="equipment"
+    id=4, action="equipment.update", resource="equipment"
 )
 
 equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]

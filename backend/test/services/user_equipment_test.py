@@ -1,7 +1,10 @@
 """Tests for the equipment service"""
 
 from unittest.mock import create_autospec
+from .reset_table_id_seq import reset_table_id_seq
+from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
+from backend.models.role import Role
 from backend.services.exceptions import UserPermissionException
 from ...models.equipment import Equipment
 from ...services.equipment import EquipmentService
@@ -16,7 +19,6 @@ from .user_data import user, ambassador
 @pytest.fixture(autouse=True)
 def equipment_service(session: Session):
     """This PyTest fixture is injected into each test parameter of the same name below.
-
     It constructs a new, empty EquipmentService object."""
     equipment_service = EquipmentService(session)
     return equipment_service
@@ -25,6 +27,15 @@ def equipment_service(session: Session):
 @pytest.fixture(autouse=True)
 def fake_data_fixture(session: Session):
     """Inserts fake data to the test session."""
+
+    # Add ambassador role for testing permissions specific to ambassadors.
+    ambassador_role = Role(id=2, name="ambassadors")
+    entity = RoleEntity.from_model(ambassador_role)
+    session.add(entity)
+    session.commit()
+    reset_table_id_seq(session, RoleEntity, RoleEntity.id, 3)
+
+    # Insert fake equipment data for testing
     insert_fake_data(session)
     session.commit()
     yield
