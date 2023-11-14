@@ -44,7 +44,9 @@ class UserEntity(EntityBase):
     # GitHub Avatar permalink for the user
     github_avatar: Mapped[str | None] = mapped_column(String(), nullable=True)
     # True/False user has signed equipment wavier
-    signed_equipment_wavier: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    signed_equipment_wavier: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
 
     # All of the roles for the given user.
     # NOTE: This field establishes a many-to-many relationship between the users and roles table.
@@ -100,7 +102,7 @@ class UserEntity(EntityBase):
             github_id=self.github_id,
             github_avatar=self.github_avatar,
             pronouns=self.pronouns,
-            signed_equipment_wavier=self.signed_equipment_wavier
+            signed_equipment_wavier=self.signed_equipment_wavier,
         )
 
     def update(self, model: User) -> None:
