@@ -17,13 +17,15 @@ import { EquipmentService } from './equipment.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { EquipmentCheckoutConfirmationComponent } from './equipment-checkout-confirmation/equipment-checkout-confirmation.component';
+import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-equipment.component';
 
 @NgModule({
   declarations: [
     UserEquipmentComponent,
     EquipmentCard,
     WaiverComponent,
-    EquipmentCheckoutConfirmationComponent
+    EquipmentCheckoutConfirmationComponent,
+    AmbassadorEquipmentComponent
   ],
   imports: [
     CommonModule,
