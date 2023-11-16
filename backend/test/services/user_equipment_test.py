@@ -3,6 +3,7 @@
 from unittest.mock import create_autospec
 
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
+from backend.services.permission import PermissionService
 from .reset_table_id_seq import reset_table_id_seq
 from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
@@ -14,8 +15,9 @@ from ...services.user import UserService
 import pytest
 from sqlalchemy.orm import Session
 
-from .user_equipment_data import equipment, quest_3, arduino, insert_fake_data
-from .user_data import user, ambassador
+from .user_equipment_data import equipment, quest_3, arduino, insert_fake_data, users
+
+# from .user_data import user, ambassador
 
 
 @pytest.fixture(autouse=True)
@@ -60,12 +62,14 @@ def test_update(equipment_service: EquipmentService):
         condition=8,
         is_checked_out=True,
     )
-    equipment_service._permission = create_autospec(equipment_service._permission)
+    permission_svc = create_autospec(PermissionService)
+    permission_svc.enforce.return_value = None
+    equipment_service._permission = permission_svc
 
-    update = equipment_service.update(changed_item, ambassador)
+    update = equipment_service.update(changed_item, users[0])
 
-    equipment_service._permission.enforce.assert_called_with(
-        ambassador, "equipment.update", "equipment"
+    equipment_service._permission.enforce.assert_called_once_with(
+        users[0], "equipment.update", "equipment"
     )
 
     assert isinstance(update, Equipment)
@@ -81,15 +85,15 @@ def test_update_not_authorized(equipment_service: EquipmentService):
         condition=8,
         is_checked_out=True,
     )
-    equipment_service._permission = create_autospec(equipment_service._permission)
-    try:
-        equipment_service.update(changed_item, user)
-    except Exception as e:
-        assert True
-    # with pytest.raises(Exception) as e:
+    # equipment_service._permission = create_autospec(equipment_service._permission)
+    # try:
     #     equipment_service.update(changed_item, user)
-    #     # Fail test if no exception is thrown
-    #     pytest.fail()
+    # except Exception as e:
+    #     assert True
+    with pytest.raises(UserPermissionException):
+        equipment_service.update(changed_item, ambassador)
+        # Fail test if no exception is thrown
+        # pytest.fail()
 
 
 def test_update_equipment_not_in_db(equipment_service: EquipmentService):

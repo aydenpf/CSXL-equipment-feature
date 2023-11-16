@@ -4,13 +4,17 @@
 
 import pytest
 from sqlalchemy.orm import Session
+from backend.entities import user_role_table
 from backend.entities.equipment_checkout_request_entity import (
     EquipmentCheckoutRequestEntity,
 )
 from backend.entities.permission_entity import PermissionEntity
+from backend.entities.user_entity import UserEntity
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.permission import Permission
+from backend.models.user import User
+from backend.test.services import role_data
 from backend.test.services.role_data import ambassador_role
 from .reset_table_id_seq import reset_table_id_seq
 from ...entities.equipment_entity import EquipmentEntity
@@ -80,6 +84,28 @@ quest_3_two = Equipment(
     checkout_history=[111111111],
 )
 
+ambassador = User(
+    id=2,
+    pid=888888888,
+    onyen="xlstan",
+    email="amam@unc.edu",
+    first_name="Amy",
+    last_name="Ambassador",
+    pronouns="They / Them / Theirs",
+    signed_equipment_wavier=True,
+)
+
+user = User(
+    id=3,
+    pid=111111111,
+    onyen="user",
+    email="user@unc.edu",
+    first_name="Sally",
+    last_name="Student",
+    pronouns="She / They",
+    signed_equipment_wavier=True,
+)
+
 checkout_request_quest_3 = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
 
 checkout_request_arduino = EquipmentCheckoutRequest(model="Arduino Uno", pid=999999999)
@@ -102,6 +128,12 @@ permissions = [
     ambassador_permission_get_all_requests,
 ]
 
+users = [user, ambassador]
+
+roles_users = {
+    role_data.ambassador_role.id: [ambassador],
+}
+
 equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
 
 checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
@@ -109,13 +141,19 @@ checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
 
 def insert_fake_data(session: Session):
     global equipment
-
+    global users
     # Create entities for test equipment data
     entities = []
     for item in equipment:
         entity = EquipmentEntity.from_model(item)
         session.add(entity)
         entities.append(entity)
+
+    user_entities = []
+    for user in users:
+        entity = UserEntity.from_model(user)
+        session.add(entity)
+        user_entities.append(entity)
 
     # Create entities for test equipment checkout request data
     request_entities = []
@@ -145,6 +183,16 @@ def insert_fake_data(session: Session):
         EquipmentCheckoutRequestEntity.id,
         len(checkout_requests) + 1,
     )
+    reset_table_id_seq(session, UserEntity, UserEntity.id, len(users) + 1)
 
     # Commit all changes
     session.commit()
+
+    # Associate Users with the Role(s) they are in
+    for role_id, members in roles_users.items():
+        for user in members:
+            session.execute(
+                user_role_table.insert().values(
+                    {"role_id": role_id, "user_id": user.id}
+                )
+            )

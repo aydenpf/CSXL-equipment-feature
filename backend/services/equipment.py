@@ -77,6 +77,7 @@ class EquipmentService:
 
         # ensure user has ambassador permissions
         self._permission.enforce(subject, "equipment.update", "equipment")
+        print("passed")
 
         # get item with matching equipment_id from db
         query = select(EquipmentEntity).where(
