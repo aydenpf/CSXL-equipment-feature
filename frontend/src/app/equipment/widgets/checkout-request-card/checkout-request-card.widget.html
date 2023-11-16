@@ -1,9 +1,9 @@
-<div class="request-container">
-  <mat-card class="content" appearance="outlined">
+<div>
+  <mat-card appearance="outlined">
     <mat-card-header>
       <mat-card-title> Equipment Checkout Requests </mat-card-title>
     </mat-card-header>
-    <mat-table class="full-width-table" [dataSource]="checkoutRequests">
+    <table mat-table [dataSource]="checkoutRequests">
       <!--Column to hold the name of the user submitting the request.-->
       <ng-container matColumnDef="Name">
         <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -31,6 +31,6 @@
 
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
       <tr mat-row *matRowDef="let checkout; columns: columnsToDisplay"></tr>
-    </mat-table>
+    </table>
   </mat-card>
 </div>
