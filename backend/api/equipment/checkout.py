@@ -3,6 +3,7 @@
 This API is used to manage and list user equipment checkouts"""
 
 from fastapi import APIRouter, Depends, HTTPException
+from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
 from backend.models.user import User
@@ -35,7 +36,7 @@ def get_all(
     Returns:
         List of equipment in the database
     """
-    
+
     return equipment_service.get_all()
 
 
@@ -79,10 +80,75 @@ def get_all_types(
         equipment_service: a valid 'EquipmentService'
 
     Returns:
-        Organization: Created organization
-
-    Raises:
-        HTTPException 422 if create() raises an Exception
+        List of equipment types.
     """
 
     return equipment_service.get_all_types()
+
+
+@api.post("/add_request", tags=["Equipment"])
+def add_request(
+    equipmentCheckoutRequest: EquipmentCheckoutRequest,
+    equipmentService: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> EquipmentCheckoutRequest:
+    """
+    Adds a new checkout request.
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+        subject: a valid registered user
+        equipmentCheckoutRequest: a valid equipmentCheckoutRequest
+
+    Returns:
+        Newly created equipment checkout request
+
+    Raises:
+        WaiverNotSignedException if user has not signed waiver
+
+    """
+
+    return equipmentService.add_request(equipmentCheckoutRequest, subject)
+
+
+@api.delete("/delete_request", tags=["Equipment"])
+def delete_request(
+    equipmentCheckoutRequest: EquipmentCheckoutRequest,
+    equipmentService: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> None:
+    """
+    Deletes an existing checkout request
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+        subject: a valid registered user
+        equipmentCheckoutRequest: a valid equipmentCheckoutRequest
+
+    Returns:
+        None
+
+    Raises:
+        EquipmentCheckoutRequestNotFoundException if request does not exist
+    """
+
+    return equipmentService.delete_request(subject, equipmentCheckoutRequest)
+
+
+@api.get("/get_all_requests", tags=["Equipment"])
+def get_all_requests(
+    equipmentService: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> list[EquipmentCheckoutRequest]:
+    """
+    Gets all pending checkout requests
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+        subject: a valid registered user
+
+    Returns:
+        List of all pending checkout requests
+    """
+
+    return equipmentService.get_all_requests(subject)
