@@ -40,4 +40,12 @@ export class AmbassadorEquipmentComponent implements OnInit {
       )
       .subscribe();
   }
+
+  approveRequest(request: CheckoutRequestModel) {
+    this.equipmentService.approveRequest(request);
+  }
+
+  cancelRequest(request: CheckoutRequestModel) {
+    this.equipmentService.deleteRequest(request);
+  }
 }

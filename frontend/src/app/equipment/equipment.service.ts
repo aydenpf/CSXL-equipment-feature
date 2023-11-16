@@ -33,8 +33,8 @@ export class EquipmentService {
    * @param user, equipmentCheckoutRequest
    * @returns None
    */
-  deleteRequest() {
-    //TODO
+  deleteRequest(request: CheckoutRequestModel) {
+    console.log('Deleted');
   }
 
   /**
@@ -49,17 +49,11 @@ export class EquipmentService {
   }
 
   /**
-   * add a checkout request
+   * Approve a checkout request
    * @param user, checkout request obtject
    * @returns checkout request object
    */
-  addRequest(): CheckoutRequestModel {
-    let reqOne: CheckoutRequestModel = {
-      user_name: 'jimmy',
-      model: 'Meta Quest 3',
-      pid: 444444444
-    };
-
-    return reqOne;
+  approveRequest(request: CheckoutRequestModel) {
+    console.log('Approved');
   }
 }

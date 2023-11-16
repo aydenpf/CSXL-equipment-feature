@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CheckoutRequestModel } from '../../checkoutRequest.model';
 import { Observable } from 'rxjs';
 
@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
 })
 export class CheckoutRequestCard {
   @Input() checkoutRequests!: Observable<CheckoutRequestModel[]>;
+  @Output() approveRequest = new EventEmitter<CheckoutRequestModel>();
+  @Output() cancelRequest = new EventEmitter<CheckoutRequestModel>();
 
-  columnsToDisplay = ['Name', 'Model', 'Id', 'Button'];
+  columnsToDisplay = ['Name', 'Model', 'Id', 'Action'];
 }
