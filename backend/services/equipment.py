@@ -162,9 +162,13 @@ class EquipmentService:
             raise WaiverNotSignedException
 
         # check if the user has already submitted a checkout request for the same type of equipment
-        obj = self._session.query(EquipmentCheckoutRequestEntity).filter(
-            EquipmentCheckoutRequestEntity.model == request.model,
-            EquipmentCheckoutRequestEntity.pid == request.pid,
+        obj = (
+            self._session.query(EquipmentCheckoutRequestEntity)
+            .filter(
+                EquipmentCheckoutRequestEntity.model == request.model,
+                EquipmentCheckoutRequestEntity.pid == request.pid,
+            )
+            .one_or_none()
         )
 
         # if the user is trying to send a duplicate request, raise exception
