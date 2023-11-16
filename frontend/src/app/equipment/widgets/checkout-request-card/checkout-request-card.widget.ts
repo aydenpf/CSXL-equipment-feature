@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CheckoutRequestModel } from '../../checkoutRequest.model'
+import { CheckoutRequestModel } from '../../checkoutRequest.model';
 import { Observable } from 'rxjs';
 
 @Component({

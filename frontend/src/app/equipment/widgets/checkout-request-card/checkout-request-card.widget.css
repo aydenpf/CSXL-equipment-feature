@@ -1,0 +1,15 @@
+.request-container {
+    display: block;
+    width: 100%;
+}
+
+.content {
+    width: 100%;
+    overflow: auto; /* In case the table is wider than the screen */
+}
+  
+.full-width-table {
+    width: 100%;
+    min-width: 100%;
+    table-layout: auto;
+}
