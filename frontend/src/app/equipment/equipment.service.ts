@@ -35,7 +35,6 @@ export class EquipmentService {
    */
   deleteRequest() {
     //TODO
-    console.log('');
   }
 
   /**
@@ -43,27 +42,10 @@ export class EquipmentService {
    * @param None
    * @returns Observable<CheckoutRequestModels[]>
    */
-  getAllRequest(): CheckoutRequestModel[] {
-    let reqOne: CheckoutRequestModel = {
-      user_name: 'jimmy',
-      model: 'Meta Quest 3',
-      pid: 444444444
-    };
-
-    let reqTwo: CheckoutRequestModel = {
-      user_name: 'jimmy',
-      model: 'Meta Quest 3',
-      pid: 444444444
-    };
-
-    let reqThree: CheckoutRequestModel = {
-      user_name: 'jimmy',
-      model: 'Meta Quest 3',
-      pid: 444444444
-    };
-
-    let arr = [reqOne, reqTwo, reqThree];
-    return arr;
+  getAllRequest(): Observable<CheckoutRequestModel[]> {
+    return this.http.get<CheckoutRequestModel[]>(
+      '/api/equipment/get_all_requests'
+    );
   }
 
   /**

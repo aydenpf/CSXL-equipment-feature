@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CheckoutRequestModel } from '../../checkoutRequest.model'
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'checkout-request-card',
@@ -7,7 +8,7 @@ import { CheckoutRequestModel } from '../../checkoutRequest.model'
   styleUrls: ['./checkout-request-card.widget.css']
 })
 export class CheckoutRequestCard {
-  @Input() checkoutRequests!: CheckoutRequestModel[];
+  @Input() checkoutRequests!: Observable<CheckoutRequestModel[]>;
 
-
+  columnsToDisplay = ['Name', 'Model', 'Id', 'Button'];
 }
