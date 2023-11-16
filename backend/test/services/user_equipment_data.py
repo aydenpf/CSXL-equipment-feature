@@ -4,7 +4,11 @@
 
 import pytest
 from sqlalchemy.orm import Session
+from backend.entities.equipment_checkout_request_entity import (
+    EquipmentCheckoutRequestEntity,
+)
 from backend.entities.permission_entity import PermissionEntity
+from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.permission import Permission
 from backend.test.services.role_data import ambassador_role
@@ -76,11 +80,31 @@ quest_3_two = Equipment(
     checkout_history=[111111111],
 )
 
+checkout_request_quest_3 = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+
+checkout_request_arduino = EquipmentCheckoutRequest(model="Arduino Uno", pid=999999999)
+
 ambassador_permission_equipment = Permission(
     id=4, action="equipment.update", resource="equipment"
 )
 
+ambassador_permission_delete_checkout_request = Permission(
+    id=5, action="equipment.delete_request", resource="equipment"
+)
+
+ambassador_permission_get_all_requests = Permission(
+    id=6, action="equipment.get_all_requests", resource="equipment"
+)
+
+permissions = [
+    ambassador_permission_equipment,
+    ambassador_permission_delete_checkout_request,
+    ambassador_permission_get_all_requests,
+]
+
 equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
+
+checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
 
 
 def insert_fake_data(session: Session):
@@ -93,18 +117,34 @@ def insert_fake_data(session: Session):
         session.add(entity)
         entities.append(entity)
 
+    # Create entities for test equipment checkout request data
+    request_entities = []
+    for item in checkout_requests:
+        entity = EquipmentCheckoutRequestEntity.from_model(item)
+        session.add(entity)
+        request_entities.append(entity)
+
     # Add ambassador equipment permission for testing
-    ambassador_entity = PermissionEntity(
-        id=ambassador_permission_equipment.id,
-        role_id=ambassador_role.id,
-        action=ambassador_permission_equipment.action,
-        resource=ambassador_permission_equipment.resource,
-    )
-    session.add(ambassador_entity)
+    for i in range(0, len(permissions)):
+        ambassador_permission_entity = PermissionEntity(
+            id=permissions[i].id,
+            role_id=ambassador_role.id,
+            action=permissions[i].action,
+            resource=permissions[i].resource,
+        )
+        session.add(ambassador_permission_entity)
 
     # Reset table IDs to prevent ID conflicts
     reset_table_id_seq(session, EquipmentEntity, EquipmentEntity.id, len(equipment) + 1)
-    reset_table_id_seq(session, PermissionEntity, PermissionEntity.id, 5)
+    reset_table_id_seq(
+        session, PermissionEntity, PermissionEntity.id, len(permissions) + 4
+    )
+    reset_table_id_seq(
+        session,
+        EquipmentCheckoutRequestEntity,
+        EquipmentCheckoutRequestEntity.id,
+        len(checkout_requests) + 1,
+    )
 
     # Commit all changes
     session.commit()

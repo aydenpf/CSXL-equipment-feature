@@ -1,6 +1,8 @@
 """Tests for the equipment service"""
 
 from unittest.mock import create_autospec
+
+from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 from .reset_table_id_seq import reset_table_id_seq
 from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
@@ -79,10 +81,12 @@ def test_update_not_authorized(equipment_service: EquipmentService):
         condition=8,
         is_checked_out=True,
     )
+    equipment_service._permission = create_autospec(equipment_service._permission)
     with pytest.raises(Exception) as e:
         equipment_service.update(changed_item, user)
         # Fail test if no exception is thrown
         pytest.fail()
+
 
 def test_update_equipment_not_in_db(equipment_service: EquipmentService):
     """Tests that an error is thrown when the update method is called on an item that is not in the database."""
@@ -150,3 +154,74 @@ def test_get_all_types_when_zero_available(equipment_service: EquipmentService):
 
     fetched_equipment_types = equipment_service.get_all_types()
     assert fetched_equipment_types[1].num_available == 0
+
+
+def test_get_all_requests(equipment_service: EquipmentService):
+    """Tests that get_all_requests returns correct number of requests"""
+
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    fetched_requests = equipment_service.get_all_requests(ambassador)
+
+    equipment_service._permission.enforce.assert_called_with(
+        ambassador, "equipment.get_all_requests", "equipment"
+    )
+
+    assert len(fetched_requests) == 2
+
+
+def test_get_all_requests_not_authorized(equipment_service: EquipmentService):
+    """Tests that a user cannot get all checkout requests"""
+
+    with pytest.raises(Exception) as e:
+        equipment_service.get_all_requests(user)
+        # Fail test if no exception is thrown
+        pytest.fail()
+
+
+def test_get_all_requests_returns_correct_requests(equipment_service: EquipmentService):
+    """Tests that get_all_requests returns the correct checkout requests"""
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    fetched_requests = equipment_service.get_all_requests(ambassador)
+
+    equipment_service._permission.enforce.assert_called_with(
+        ambassador, "equipment.get_all_requests", "equipment"
+    )
+
+    assert (
+        fetched_requests[0].model == "Meta Quest 3"
+        and fetched_requests[0].pid == 111111111
+    )
+    assert (
+        fetched_requests[1].model == "Arduino Uno"
+        and fetched_requests[1].pid == 999999999
+    )
+
+
+def test_delete_request(equipment_service: EquipmentService):
+    """Tests that delete_request properly deletes a checkout request"""
+
+    to_delete = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    equipment_service.delete_request(ambassador, to_delete)
+
+    equipment_service._permission.enforce.assert_called_with(
+        ambassador, "equipment.delete_request", "equipment"
+    )
+
+    requests = equipment_service.get_all_requests(ambassador)
+
+    assert len(requests) == 1
+
+
+def test_delete_requests_not_authorized(equipment_service: EquipmentService):
+    """Tests that a checkout request cannot be deleted when the user does not have ambassador permissions"""
+    to_delete = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    with pytest.raises(Exception) as e:
+        equipment_service.delete_request(user, to_delete)
+        # Fail test if no exception is thrown
+        pytest.fail()

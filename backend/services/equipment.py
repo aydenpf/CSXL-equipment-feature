@@ -197,9 +197,13 @@ class EquipmentService:
             subject, "equipment.delete_request", resource="equipment"
         )
         # find object to delete
-        obj = self._session.query(EquipmentCheckoutRequestEntity).filter(
-            EquipmentCheckoutRequestEntity.model == request.model,
-            EquipmentCheckoutRequestEntity.pid == request.pid,
+        obj = (
+            self._session.query(EquipmentCheckoutRequestEntity)
+            .filter(
+                EquipmentCheckoutRequestEntity.model == request.model,
+                EquipmentCheckoutRequestEntity.pid == request.pid,
+            )
+            .one_or_none()
         )
 
         # ensure object exists
