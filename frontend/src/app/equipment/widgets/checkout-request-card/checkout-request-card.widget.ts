@@ -12,5 +12,5 @@ export class CheckoutRequestCard {
   @Output() approveRequest = new EventEmitter<CheckoutRequestModel>();
   @Output() cancelRequest = new EventEmitter<CheckoutRequestModel>();
 
-  columnsToDisplay = ['Name', 'Model', 'Id', 'Action'];
+  columnsToDisplay = ['Name', 'Model', 'Action'];
 }

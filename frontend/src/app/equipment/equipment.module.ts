@@ -20,6 +20,7 @@ import { EquipmentCheckoutConfirmationComponent } from './equipment-checkout-con
 import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-equipment.component';
 import { CheckoutRequestCard } from './widgets/checkout-request-card/checkout-request-card.widget';
 import { MatTableModule } from '@angular/material/table';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { MatTableModule } from '@angular/material/table';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTableModule
+    MatTableModule,
+    MatSelectModule
   ]
 })
 export class EquipmentModule {}
