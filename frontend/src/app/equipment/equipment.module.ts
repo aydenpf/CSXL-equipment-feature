@@ -18,6 +18,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { EquipmentCheckoutConfirmationComponent } from './equipment-checkout-confirmation/equipment-checkout-confirmation.component';
 import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-equipment.component';
+import { CheckoutRequestCard } from './widgets/checkout-request-card/checkout-request-card.widget';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-
     EquipmentCard,
     WaiverComponent,
     EquipmentCheckoutConfirmationComponent,
-    AmbassadorEquipmentComponent
+    AmbassadorEquipmentComponent,
+    CheckoutRequestCard
   ],
   imports: [
     CommonModule,
@@ -36,7 +39,8 @@ import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-
     ReactiveFormsModule,
     FormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatTableModule
   ]
 })
 export class EquipmentModule {}
