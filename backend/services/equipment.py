@@ -193,7 +193,9 @@ class EquipmentService:
         """
 
         # TODO: enforce permission
-
+        self._permission.enforce(
+            subject, "equipment.delete_request", resource="equipment"
+        )
         # find object to delete
         obj = self._session.query(EquipmentCheckoutRequestEntity).filter(
             EquipmentCheckoutRequestEntity.model == request.model,
@@ -209,8 +211,12 @@ class EquipmentService:
             # raise exception
             raise EquipmentCheckoutRequestNotFoundException(request)
 
-    def get_all_requests(self) -> list[EquipmentCheckoutRequest]:
+    def get_all_requests(self, subject: User) -> list[EquipmentCheckoutRequest]:
         """Return a list of all equipment checkout requests in the db"""
+        # enforce ambasssador permission
+        self._permission.enforce(
+            subject, "equipment.get_all_requests", resource="equipment"
+        )
         # create the query for getting all equipment checkout request entities.
         query = select(EquipmentCheckoutRequestEntity)
         # execute the query grabbing each row from the equipment table
