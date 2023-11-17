@@ -41,7 +41,10 @@ export class EquipmentCard {
     if (!this.profile.signed_equipment_wavier) {
       this.router.navigateByUrl('/equipment/waiver');
     } else {
-      console.log(this.equipmentService.addRequest(this.equipmentType));
+      this.equipmentService.addRequest(this.equipmentType).subscribe({
+        next: (checkoutRequest) => console.log('success!'),
+        error: (error) => console.log('error!')
+      });
       this.router.navigateByUrl('/equipment/checkout');
     }
   }
