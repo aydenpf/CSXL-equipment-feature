@@ -131,7 +131,7 @@ def delete_request(
     Raises:
         EquipmentCheckoutRequestNotFoundException if request does not exist
     """
-
+    
     return equipmentService.delete_request(subject, equipmentCheckoutRequest)
 
 

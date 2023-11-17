@@ -69,13 +69,11 @@ export class EquipmentService {
   deleteRequest(request: CheckoutRequestModel) {
     //formatting for delete request data
     const options = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      }),
+      headers: new HttpHeaders(),
       body: request // Here you put the body data
     };
     //make the api call
-    return this.http.post<CheckoutRequestModel>(
+    return this.http.delete<CheckoutRequestModel>(
       '/api/equipment/delete_request',
       options
     );

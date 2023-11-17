@@ -82,13 +82,13 @@ export class AmbassadorEquipmentComponent implements OnInit {
 
   cancelRequest(request: CheckoutRequestModel) {
     // Calls the proper API route to remove a request from checkout requests table in the backend.
-    this.equipmentService.deleteRequest(request);
+    this.equipmentService.deleteRequest(request).subscribe();
     this.updateCheckoutRequestsTable();
   }
 
   approveStagedRequest(request: StagedCheckoutRequestModel) {
     // Calls the proper API route to move request into checkouts table in backend.
-    this.equipmentService.approveRequest(request);
+    this.equipmentService.approveRequest(request); //DO NOT FORGET TO SUBSCRIBE
   }
 
   // Gets the length of the observable array of checkout request models.
