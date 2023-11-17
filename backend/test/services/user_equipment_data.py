@@ -96,10 +96,15 @@ ambassador_permission_get_all_requests = Permission(
     id=6, action="equipment.get_all_requests", resource="equipment"
 )
 
+ambassador_permission_get_all_requested = Permission(
+    id=7, action="equipment.get_equipment_for_request", resource="equipment"
+)
+
 permissions = [
     ambassador_permission_equipment,
     ambassador_permission_delete_checkout_request,
     ambassador_permission_get_all_requests,
+    ambassador_permission_get_all_requested,
 ]
 
 equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
