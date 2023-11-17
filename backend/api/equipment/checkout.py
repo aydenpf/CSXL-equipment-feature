@@ -144,7 +144,7 @@ def get_all_requests(
     Gets all pending checkout requests
 
     Parameters:
-        equipment_service: a valid 'EquipmentService'
+        equipmentService: a valid 'EquipmentService'
         subject: a valid registered user
 
     Returns:
@@ -152,3 +152,24 @@ def get_all_requests(
     """
 
     return equipmentService.get_all_requests(subject)
+
+
+@api.get("/get_equipment_for_request/{model}", tags=["Equipment"])
+def get_all_for_request(
+    model: str,
+    equipmentService: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> list[Equipment]:
+    """
+    Gets all available equipment for a confirmed checkout request
+
+    Parameters:
+        model: An equipment type as a string
+        equipment_service: a valid 'EquipmentService'
+        subject: a valid registered user
+
+    Returns:
+        List of all available requested equipment
+    """
+
+    return equipmentService.get_equipment_for_request(subject, model)
