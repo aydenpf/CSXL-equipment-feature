@@ -4,3 +4,8 @@
     (approveRequest)="approveRequest($event)"
     (cancelRequest)="cancelRequest($event)" />
 </div>
+<div>
+  <staged-checkout-request-card
+    [checkoutRequests]="stagedCheckoutRequests"
+    (approveRequest)="(approveStagedRequest)" />
+</div>

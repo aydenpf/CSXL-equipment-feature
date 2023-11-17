@@ -21,6 +21,7 @@ import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-
 import { CheckoutRequestCard } from './widgets/checkout-request-card/checkout-request-card.widget';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { StageCard } from './widgets/staged-checkout-request-card/staged-checkout-request-card.widget';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
     WaiverComponent,
     EquipmentCheckoutConfirmationComponent,
     AmbassadorEquipmentComponent,
-    CheckoutRequestCard
+    CheckoutRequestCard,
+    StageCard
   ],
   imports: [
     CommonModule,

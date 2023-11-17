@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
 import { Equipment } from './equipment.model';
 import { EquipmentType } from './equipmentType.model';
@@ -67,7 +67,19 @@ export class EquipmentService {
    * @returns None
    */
   deleteRequest(request: CheckoutRequestModel) {
-    console.log('Deleted');
+    console.log('delete requested');
+    //formatting for delete request data
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      body: request // Here you put the body data
+    };
+    //make the api call
+    return this.http.post<CheckoutRequestModel>(
+      '/api/equipment/delete_request',
+      options
+    );
   }
 
   /**
