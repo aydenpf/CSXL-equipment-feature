@@ -29,7 +29,6 @@ export class CheckoutRequestCard {
   public refreshTable() {
     if (this.table) {
       this.table.renderRows();
-      console.log(this.table);
     }
   }
 

@@ -54,6 +54,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
   //updates the checkout request table
   updateCheckoutRequestsTable() {
     this.checkoutRequests$ = this.equipmentService.getAllRequest();
+    this.getCheckoutRequestLength();
     this.requestTable?.refreshTable();
   }
 
@@ -82,6 +83,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
   cancelRequest(request: CheckoutRequestModel) {
     // Calls the proper API route to remove a request from checkout requests table in the backend.
     this.equipmentService.deleteRequest(request);
+    this.updateCheckoutRequestsTable();
   }
 
   approveStagedRequest(request: StagedCheckoutRequestModel) {
@@ -93,7 +95,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
   getCheckoutRequestLength() {
     this.checkoutRequests$
       .pipe(
-        reduce((count) => count + 1, 0) // Starts with 0 and increments by 1 for each item
+        reduce((count) => count + 1, 1) // Starts with 0 and increments by 1 for each item
       )
       .subscribe((count) => (this.checkoutRequestsLength = count));
   }

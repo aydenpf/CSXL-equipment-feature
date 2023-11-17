@@ -67,7 +67,6 @@ export class EquipmentService {
    * @returns None
    */
   deleteRequest(request: CheckoutRequestModel) {
-    console.log('delete requested');
     //formatting for delete request data
     const options = {
       headers: new HttpHeaders({

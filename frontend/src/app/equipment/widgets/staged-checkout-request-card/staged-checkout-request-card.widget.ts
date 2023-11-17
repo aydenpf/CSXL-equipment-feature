@@ -34,7 +34,6 @@ export class StageCard {
   public refreshTable() {
     if (this.table) {
       this.table.renderRows();
-      console.log(this.table);
     }
   }
 
