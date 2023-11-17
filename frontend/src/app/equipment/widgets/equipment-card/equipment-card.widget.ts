@@ -6,6 +6,10 @@
 import { Component, Input } from '@angular/core';
 import { EquipmentType } from '../../equipmentType.model';
 import { Router } from '@angular/router';
+import { EquipmentService } from '../../equipment.service';
+import { Profile } from 'src/app/models.module';
+import { Subscription } from 'rxjs';
+import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
   selector: 'equipment-card',
@@ -15,7 +19,30 @@ import { Router } from '@angular/router';
 export class EquipmentCard {
   /** Inputs and outputs go here */
 
+  private profile: Profile | undefined;
+  private profileSubscription!: Subscription;
+
   @Input() equipmentType!: EquipmentType;
 
-  constructor(public router: Router) {}
+  constructor(
+    public router: Router,
+    public equipmentService: EquipmentService,
+    protected profileSvc: ProfileService
+  ) {
+    this.profileSubscription = this.profileSvc.profile$.subscribe(
+      (profile) => (this.profile = profile)
+    );
+  }
+
+  onCheckout() {
+    if (this.profile === undefined) {
+      throw new Error('Only allowed for logged in users.');
+    }
+    if (!this.profile.signed_equipment_wavier) {
+      this.router.navigateByUrl('/equipment/waiver');
+    } else {
+      console.log(this.equipmentService.addRequest(this.equipmentType));
+      this.router.navigateByUrl('/equipment/checkout');
+    }
+  }
 }

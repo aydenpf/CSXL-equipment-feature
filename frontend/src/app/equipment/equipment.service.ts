@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Equipment } from './equipment.model';
 import { EquipmentType } from './equipmentType.model';
-import { ProfileService } from '../profile/profile.service';
+import { Profile, ProfileService } from '../profile/profile.service';
 import { CheckoutRequestModel } from './checkoutRequest.model';
 @Injectable({
   providedIn: 'root'
 })
 export class EquipmentService {
+  private profile: Profile | undefined;
+  private profileSubscription!: Subscription;
+
   constructor(
     private http: HttpClient,
     private profileSvc: ProfileService
-  ) {}
+  ) {
+    this.profileSubscription = this.profileSvc.profile$.subscribe(
+      (profile) => (this.profile = profile)
+    );
+  }
 
   /** Returns all equipment entries from backend database table using backend HTTP get request
    * @returns {Observable<Equipment[]>}
@@ -26,6 +33,32 @@ export class EquipmentService {
    */
   getAllEquipmentTypes(): Observable<EquipmentType[]> {
     return this.http.get<EquipmentType[]>('/api/equipment/get_all_types');
+  }
+
+  /**
+   * Creates a checkout request and adds it to backend database.
+   * @param user, equipmentCheckoutRequest
+   * @return equipmentCheckoutRequest
+   * @throws WaiverNotSigned exception if user has not signed waiver.
+   */
+  addRequest(equipmentType: EquipmentType): Observable<CheckoutRequestModel> {
+    if (this.profile === undefined) {
+      throw new Error('Only allowed for logged in users.');
+    }
+    let modelName = equipmentType.model;
+    let first_name = this.profile.first_name;
+    let last_name = this.profile.last_name;
+    let pid_value = this.profile.pid;
+    let checkout_request = {
+      // user_name: `${first_name} ${last_name}`,
+      model: modelName,
+      pid: pid_value
+    };
+    console.log(checkout_request);
+    return this.http.post<CheckoutRequestModel>(
+      '/api/equipment/add_request',
+      checkout_request
+    );
   }
 
   /**
