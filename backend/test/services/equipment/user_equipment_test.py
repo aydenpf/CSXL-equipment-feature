@@ -4,20 +4,20 @@ from unittest.mock import create_autospec
 
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 from backend.services.permission import PermissionService
-from .reset_table_id_seq import reset_table_id_seq
+from ..reset_table_id_seq import reset_table_id_seq
 from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
 from backend.models.role import Role
 from backend.services.exceptions import UserPermissionException
-from ...models.equipment import Equipment
-from ...services.equipment import EquipmentService
-from ...services.user import UserService
+from ....models.equipment import Equipment
+from ....services.equipment import EquipmentService
+from ....services.user import UserService
 import pytest
 from sqlalchemy.orm import Session
 
 from .user_equipment_data import equipment, quest_3, arduino, insert_fake_data, users
 
-# from .user_data import user, ambassador
+from ..user_data import user, ambassador
 
 
 @pytest.fixture(autouse=True)

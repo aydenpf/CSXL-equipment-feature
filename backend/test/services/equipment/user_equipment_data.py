@@ -16,9 +16,9 @@ from backend.models.permission import Permission
 from backend.models.user import User
 from backend.test.services import role_data
 from backend.test.services.role_data import ambassador_role
-from .reset_table_id_seq import reset_table_id_seq
-from ...entities.equipment_entity import EquipmentEntity
-from ...models.equipment import Equipment
+from ..reset_table_id_seq import reset_table_id_seq
+from ....entities.equipment_entity import EquipmentEntity
+from ....models.equipment import Equipment
 from enum import Enum
 
 
