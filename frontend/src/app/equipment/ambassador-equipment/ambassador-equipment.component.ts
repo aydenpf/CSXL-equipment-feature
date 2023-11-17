@@ -4,7 +4,7 @@ import { permissionGuard } from 'src/app/permission.guard';
 import { profileResolver } from 'src/app/profile/profile.resolver';
 import { EquipmentService } from '../equipment.service';
 import { CheckoutRequestModel } from '../checkoutRequest.model';
-import { Observable, tap, timer } from 'rxjs';
+import { Observable, reduce, tap, timer } from 'rxjs';
 import { StagedCheckoutRequestModel } from '../staged-checkout-request.model';
 import { StageCard } from '../widgets/staged-checkout-request-card/staged-checkout-request-card.widget';
 import { CheckoutRequestCard } from '../widgets/checkout-request-card/checkout-request-card.widget';
@@ -24,6 +24,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
   };
 
   checkoutRequests$: Observable<CheckoutRequestModel[]>;
+  checkoutRequestsLength: Number | undefined;
   stagedCheckoutRequests: StagedCheckoutRequestModel[];
 
   @ViewChild(StageCard) stageTable: StageCard | undefined;
@@ -34,6 +35,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
     private equipmentService: EquipmentService
   ) {
     this.checkoutRequests$ = equipmentService.getAllRequest();
+    this.getCheckoutRequestLength();
     this.stagedCheckoutRequests = [];
   }
 
@@ -85,5 +87,14 @@ export class AmbassadorEquipmentComponent implements OnInit {
   approveStagedRequest(request: StagedCheckoutRequestModel) {
     // Calls the proper API route to move request into checkouts table in backend.
     this.equipmentService.approveRequest(request);
+  }
+
+  // Gets the length of the observable array of checkout request models.
+  getCheckoutRequestLength() {
+    this.checkoutRequests$
+      .pipe(
+        reduce((count) => count + 1, 0) // Starts with 0 and increments by 1 for each item
+      )
+      .subscribe((count) => (this.checkoutRequestsLength = count));
   }
 }
