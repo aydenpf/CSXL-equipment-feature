@@ -232,6 +232,23 @@ class EquipmentService:
         # convert the query results into 'EquipmentReservationRequest' models and return as a list
         return [result.to_model() for result in query_result]
 
+    def get_equipment_for_request(self, subject: User, model: str) -> list[Equipment]:
+        """returns a list of all available equipment corresponding to the checkout request's model"""
+
+        # enforce ambassador permission
+        self._permission.enforce(
+            subject, "equipment.get_equipment_for_request", "equipment"
+        )
+
+        # query for all equipment that matches the checkout request model type AND is not checked out
+        query = select(EquipmentEntity).where(
+            EquipmentEntity.model == model,
+            EquipmentEntity.is_checked_out == False,
+        )
+
+        # return list of queried equipment entities as equipment models
+        return [result.to_model() for result in self._session.scalars(query).all()]
+
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:
     #     """
