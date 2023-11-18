@@ -215,7 +215,9 @@ def test_get_all_requests_returns_correct_requests(equipment_service: EquipmentS
 def test_delete_request(equipment_service: EquipmentService):
     """Tests that delete_request properly deletes a checkout request"""
 
-    to_delete = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    to_delete = EquipmentCheckoutRequest(
+        user_name="Sally Student", model="Meta Quest 3", pid=111111111
+    )
     equipment_service._permission = create_autospec(equipment_service._permission)
 
     equipment_service.delete_request(ambassador, to_delete)
@@ -231,7 +233,9 @@ def test_delete_request(equipment_service: EquipmentService):
 
 def test_delete_requests_not_authorized(equipment_service: EquipmentService):
     """Tests that a checkout request cannot be deleted when the user does not have ambassador permissions"""
-    to_delete = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    to_delete = EquipmentCheckoutRequest(
+        user_name="Sally Student", model="Meta Quest 3", pid=111111111
+    )
     equipment_service._permission = create_autospec(equipment_service._permission)
 
     try:

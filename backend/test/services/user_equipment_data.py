@@ -80,9 +80,13 @@ quest_3_two = Equipment(
     checkout_history=[111111111],
 )
 
-checkout_request_quest_3 = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+checkout_request_quest_3 = EquipmentCheckoutRequest(
+    user_name="Sally Student", model="Meta Quest 3", pid=111111111
+)
 
-checkout_request_arduino = EquipmentCheckoutRequest(model="Arduino Uno", pid=999999999)
+checkout_request_arduino = EquipmentCheckoutRequest(
+    user_name="Rhonda Root", model="Arduino Uno", pid=999999999
+)
 
 ambassador_permission_equipment = Permission(
     id=4, action="equipment.update", resource="equipment"

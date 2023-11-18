@@ -50,7 +50,7 @@ export class EquipmentService {
     let last_name = this.profile.last_name;
     let pid_value = this.profile.pid;
     let checkout_request = {
-      // user_name: `${first_name} ${last_name}`,
+      user_name: `${first_name} ${last_name}`,
       model: modelName,
       pid: pid_value
     };

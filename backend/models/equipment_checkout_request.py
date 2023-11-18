@@ -16,5 +16,6 @@ class EquipmentCheckoutRequest(BaseModel):
     of the `EquipmentCheckoutRequest` database in the PostgreSQL database.
     """
 
+    user_name: str
     model: str
     pid: int

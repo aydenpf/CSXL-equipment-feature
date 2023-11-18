@@ -15,6 +15,8 @@ class EquipmentCheckoutRequestEntity(EntityBase):
 
     # Unique ID for the equipment checkout request entry
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # User name of the user that is requesting a checkout
+    user_name: Mapped[str] = mapped_column(String(64))
     # Name of the model of the equipment requested
     model: Mapped[str] = mapped_column(String(64))
     # PID of the user that is requesting a checkout
@@ -32,6 +34,7 @@ class EquipmentCheckoutRequestEntity(EntityBase):
             Self: The entity (not yet persisted).
         """
         return cls(
+            user_name=model.user_name,
             model=model.model,
             pid=model.pid,
         )
@@ -43,4 +46,6 @@ class EquipmentCheckoutRequestEntity(EntityBase):
         Returns:
             EquipmentCheckoutRequest: An EquipmentCheckoutRequest model for API usage.
         """
-        return EquipmentCheckoutRequest(model=self.model, pid=self.pid)
+        return EquipmentCheckoutRequest(
+            user_name=self.user_name, model=self.model, pid=self.pid
+        )
