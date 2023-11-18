@@ -3,6 +3,8 @@
 import pytest
 from unittest.mock import create_autospec
 from sqlalchemy.orm import Session
+
+from backend.services.equipment import EquipmentService
 from ...services import (
     PermissionService,
     UserService,
@@ -56,6 +58,8 @@ def event_svc_integration(session: Session):
     return EventService(session, PermissionService(session))
 
 
+# added for tested: subtask 63 refactor permissions
 @pytest.fixture()
 def equipment_svc_integration(session: Session):
     """This fixture is used to test the EquipmentService class with a real PermissionService"""
+    return EquipmentService(session, PermissionService(session))

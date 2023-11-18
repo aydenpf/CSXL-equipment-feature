@@ -1,4 +1,4 @@
-`"""Mock data for users.
+"""Mock data for users.
 
 Three users are setup for testing and development purposes:
 
@@ -48,7 +48,7 @@ user = User(
     first_name="Sally",
     last_name="Student",
     pronouns="She / They",
-    signed_equipment_wavier=True
+    signed_equipment_wavier=True,
 )
 
 users = [root, ambassador, user]

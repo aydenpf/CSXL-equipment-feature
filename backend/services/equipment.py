@@ -48,6 +48,7 @@ class EquipmentService:
     def __init__(
         self,
         session: Session = Depends(db_session),
+        permission: PermissionService = Depends(),
     ):
         """Initialize the session for querying the db."""
         self._session = session

@@ -5,10 +5,17 @@ Includes mock data to be loaded in by the reset_demo script
 from enum import Enum
 import pytest
 from sqlalchemy.orm import Session
+from backend.entities.equipment_checkout_request_entity import (
+    EquipmentCheckoutRequestEntity,
+)
+from backend.entities.equipment_entity import EquipmentEntity
+from backend.entities.permission_entity import PermissionEntity
 
 from backend.models.equipment import Equipment
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 from backend.models.permission import Permission
+from backend.test.services.reset_table_id_seq import reset_table_id_seq
+from backend.test.services.role_data import ambassador_role
 
 
 class DeviceType(Enum):
@@ -83,3 +90,47 @@ ambassador_permission_delete_checkout_request = Permission(
 ambassador_permission_get_all_requests = Permission(
     id=6, action="equipment.get_all_requests", resource="equipment"
 )
+
+permissions = [
+    ambassador_permission_get_all_requests,
+    ambassador_permission_delete_checkout_request,
+    ambassador_permission_delete_checkout_request,
+]
+
+checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
+equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
+
+
+def insert_fake_data(session: Session):
+    global equipment, permissions, checkout_requests
+
+    for item in equipment:
+        entity = EquipmentEntity.from_model(item)
+        session.add(entity)
+
+    for request in checkout_requests:
+        entity = EquipmentCheckoutRequestEntity.from_model(request)
+        session.add(entity)
+
+    for i in range(0, len(permissions)):
+        ambassador_permission_entity = PermissionEntity(
+            id=permissions[i].id,
+            role_id=ambassador_role.id,
+            action=permissions[i].action,
+            resource=permissions[i].resource,
+        )
+        session.add(ambassador_permission_entity)
+
+    # Reset table IDs to prevent ID conflicts
+    reset_table_id_seq(session, EquipmentEntity, EquipmentEntity.id, len(equipment) + 1)
+    reset_table_id_seq(
+        session, PermissionEntity, PermissionEntity.id, len(permissions) + 4
+    )
+    reset_table_id_seq(
+        session,
+        EquipmentCheckoutRequestEntity,
+        EquipmentCheckoutRequestEntity.id,
+        len(checkout_requests) + 1,
+    )
+    # commit all changes
+    session.commit()
