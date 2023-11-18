@@ -3,6 +3,7 @@
 This API is used to manage and list user equipment checkouts"""
 
 from fastapi import APIRouter, Depends, HTTPException
+from backend.models.equipment_checkout import EquipmentCheckout
 
 from backend.models.equipment_type import EquipmentType
 from backend.models.user import User
@@ -35,7 +36,7 @@ def get_all(
     Returns:
         List of equipment in the database
     """
-    
+
     return equipment_service.get_all()
 
 
@@ -86,3 +87,20 @@ def get_all_types(
     """
 
     return equipment_service.get_all_types()
+
+
+@api.get("/get_all_active_checkouts", tags=["Equipment"])
+def get_all_active_checkouts(
+    equipment_service: EquipmentService = Depends(),
+) -> list[EquipmentCheckout]:
+    """
+    Gets equipment checkouts
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+
+    Returns:
+        Array of equipment checkouts
+    """
+
+    return equipment_service.get_all_active_checkouts()

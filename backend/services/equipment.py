@@ -7,11 +7,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from backend.models.equipment_type import EquipmentType
+from backend.models.equipment_checkout import EquipmentCheckout
 from .permission import PermissionService
 
 from ..database import db_session
 from ..models.equipment import Equipment
 from ..entities.equipment_entity import EquipmentEntity
+from ..entities.equipment_checkout_entity import EquipmentCheckoutEntity
 from ..models import User
 
 from .exceptions import EquipmentNotFoundException
@@ -44,7 +46,7 @@ class EquipmentService:
         # convert the query results into 'Equipment' models and return as a list
         return [result.to_model() for result in query_result]
 
-    # TODO: add param for user and save users pid in equipments list of pids 
+    # TODO: add param for user and save users pid in equipments list of pids
     def update(self, item: Equipment, subject: User) -> Equipment:
         """
         updates a specific equipment item.
@@ -122,6 +124,16 @@ class EquipmentService:
 
         return equipment_types
 
+    def get_all_active_checkouts(self) -> list[EquipmentCheckout]:
+        # TODO: add permissions for this method
+        # Create the query for getting all equipment checkout entities.
+        query = select(EquipmentCheckoutEntity).where(
+            EquipmentCheckoutEntity.is_active == True
+        )
+        # execute the query grabbing each row from the equipment table
+        query_result = self._session.scalars(query).all()
+        # convert the query results into 'Equipment' models and return as a list
+        return [result.to_model() for result in query_result]
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:
