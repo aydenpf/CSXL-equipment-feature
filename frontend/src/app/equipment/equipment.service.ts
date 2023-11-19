@@ -109,4 +109,15 @@ export class EquipmentService {
       `/api/equipment/get_equipment_for_request/${model}`
     );
   }
+
+  /* * Update waiver_signed field for current user
+   *
+   * @returns Observable<Profile>
+   */
+  update_waiver_field(): Observable<Profile> {
+    return this.http.put<Profile>(
+      'api/equipment/update_waiver_field',
+      this.profile
+    );
+  }
 }
