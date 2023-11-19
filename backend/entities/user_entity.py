@@ -122,3 +122,4 @@ class UserEntity(EntityBase):
         self.github = model.github
         self.github_id = model.github_id or None
         self.github_avatar = model.github_avatar or ""
+        self.signed_equipment_wavier = model.signed_equipment_wavier

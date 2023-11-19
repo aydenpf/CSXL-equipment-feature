@@ -98,4 +98,16 @@ export class EquipmentService {
   approveRequest(request: CheckoutRequestModel) {
     console.log('Approved');
   }
+
+  /**
+   * Update waiver_signed field for current user
+   *
+   * @returns Observable<Profile>
+   */
+  update_waiver_field(): Observable<Profile> {
+    return this.http.put<Profile>(
+      'api/equipment/update_waiver_field',
+      this.profile
+    );
+  }
 }

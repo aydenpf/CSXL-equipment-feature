@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from backend.entities.equipment_checkout_request_entity import (
     EquipmentCheckoutRequestEntity,
 )
+from backend.entities.user_entity import UserEntity
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
@@ -248,6 +249,22 @@ class EquipmentService:
 
         # return list of queried equipment entities as equipment models
         return [result.to_model() for result in self._session.scalars(query).all()]
+
+    def update_waiver_signed_field(self, user: User) -> User:
+        updated_user: User = user
+        updated_user.signed_equipment_wavier = True
+
+        query = select(UserEntity).where(UserEntity.pid == user.pid)
+        entity_item: UserEntity | None = self._session.scalar(query)
+
+        if entity_item:
+            entity_item.update(updated_user)
+
+            self._session.commit()
+            return entity_item.to_model()
+
+        else:
+            raise Exception()
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:

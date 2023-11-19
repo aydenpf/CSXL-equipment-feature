@@ -131,7 +131,7 @@ def delete_request(
     Raises:
         EquipmentCheckoutRequestNotFoundException if request does not exist
     """
-    
+
     return equipmentService.delete_request(subject, equipmentCheckoutRequest)
 
 
@@ -173,3 +173,27 @@ def get_all_for_request(
     """
 
     return equipmentService.get_equipment_for_request(subject, model)
+
+
+@api.put("/update_waiver_field", tags=["Equipment"])
+def update_waiver_field(
+    equipment_service: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> User:
+    """
+    Update the signed waiver field of a user
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+        subject: a valid User model representing the currently logged in User
+
+    Returns:
+        User: the updated User model
+    """
+
+    try:
+        # Attempt to update user's signed waiver field
+        return equipment_service.update_waiver_signed_field(subject)
+    except Exception as e:
+        # Raise exception if field cannot be updated
+        raise HTTPException(status_code=422, detail=str(e))
