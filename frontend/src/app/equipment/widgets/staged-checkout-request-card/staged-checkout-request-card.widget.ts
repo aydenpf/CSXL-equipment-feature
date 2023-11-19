@@ -49,7 +49,7 @@ export class StageCard {
   // Remove the request from checkoutRequests array.
   cancelRequest(request: StagedCheckoutRequestModel) {
     this.checkoutRequests = this.checkoutRequests.filter(
-      (req) => req.pid != request.pid || req.model != req.model
+      (req) => req.pid != request.pid || req.model != request.model
     );
     this.table?.renderRows();
     console.log(this.table);
