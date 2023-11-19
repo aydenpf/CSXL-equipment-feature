@@ -10,6 +10,7 @@ import { EquipmentService } from '../../equipment.service';
 import { Profile } from 'src/app/models.module';
 import { Subscription } from 'rxjs';
 import { ProfileService } from 'src/app/profile/profile.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'equipment-card',
@@ -27,7 +28,8 @@ export class EquipmentCard {
   constructor(
     public router: Router,
     public equipmentService: EquipmentService,
-    protected profileSvc: ProfileService
+    protected profileSvc: ProfileService,
+    protected snackBar: MatSnackBar
   ) {
     this.profileSubscription = this.profileSvc.profile$.subscribe(
       (profile) => (this.profile = profile)
@@ -42,10 +44,20 @@ export class EquipmentCard {
       this.router.navigateByUrl('/equipment/waiver');
     } else {
       this.equipmentService.addRequest(this.equipmentType).subscribe({
-        next: (checkoutRequest) => console.log('success!'),
-        error: (error) => console.log('error!')
+        next: (checkoutRequest) => {
+          console.log('success!');
+          this.router.navigateByUrl('/equipment/checkout');
+        },
+        error: (error) => this.onError(error)
       });
-      this.router.navigateByUrl('/equipment/checkout');
     }
+  }
+
+  onError(err: any) {
+    this.snackBar.open(
+      'You already have a checkout request for this item',
+      '',
+      { duration: 4000 }
+    );
   }
 }
