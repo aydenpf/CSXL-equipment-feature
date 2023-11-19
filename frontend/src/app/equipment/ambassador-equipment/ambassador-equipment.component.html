@@ -1,7 +1,7 @@
 <div class="checkout-request-container">
   <checkout-request-card
     *ngIf="
-      checkoutRequestsLength && checkoutRequestsLength > 0;
+      checkoutRequestsLength && checkoutRequestsLength >= 1;
       else noUpcoming
     "
     [checkoutRequests]="checkoutRequests$"

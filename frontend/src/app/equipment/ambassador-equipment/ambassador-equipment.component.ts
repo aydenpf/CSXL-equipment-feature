@@ -24,7 +24,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
   };
 
   checkoutRequests$: Observable<CheckoutRequestModel[]>;
-  checkoutRequestsLength: Number | undefined;
+  checkoutRequestsLength: number = 0;
   stagedCheckoutRequests: StagedCheckoutRequestModel[];
 
   @ViewChild(StageCard) stageTable: StageCard | undefined;
