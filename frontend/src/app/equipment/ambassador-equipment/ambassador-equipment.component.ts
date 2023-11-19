@@ -86,13 +86,10 @@ export class AmbassadorEquipmentComponent implements OnInit {
       },
       complete: () => {
         this.stagedCheckoutRequests.push(stagedRequest);
+        this.getCheckoutRequestLength();
         this.stageTable?.refreshTable();
       }
     });
-
-    // Add stagedRequest to list of staged request models to be displayed in the stage widget
-    // this.stagedCheckoutRequests.push(stagedRequest);
-    // this.stageTable?.refreshTable();
   }
 
   cancelRequest(request: CheckoutRequestModel) {

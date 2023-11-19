@@ -42,8 +42,6 @@ export class StageCard {
     this.checkoutRequests.forEach((req) => {
       if (req.model == request.model && req.pid == request.pid) {
         req.selected_id = id;
-        console.log(`user: ${req.user_name}`);
-        console.log(`selected id: ${req.selected_id}`);
       }
     });
   }
