@@ -22,9 +22,11 @@
         <td mat-cell *matCellDef="let request">
           <mat-select
             (selectionChange)="idSelectionChange($event.value, request)">
-            <mat-option *ngFor="let id of request.id" [value]="id">
-              {{ id }}
-            </mat-option>
+            <mat-option
+              *ngFor="let id of request.id_choices"
+              value="{{ id }}"
+              >{{ id }}</mat-option
+            >
           </mat-select>
         </td>
       </ng-container>

@@ -51,8 +51,8 @@ export class AmbassadorEquipmentComponent implements OnInit {
       .subscribe();
   }
 
-  //updates the checkout request table
   updateCheckoutRequestsTable() {
+    //updates the checkout request table
     this.checkoutRequests$ = this.equipmentService.getAllRequest();
     this.getCheckoutRequestLength();
     this.requestTable?.refreshTable();
@@ -61,6 +61,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
   approveRequest(request: CheckoutRequestModel) {
     // Remove the request from database table for checkin requests to prevent it from going back into check in request table on periodic update.
     this.cancelRequest(request);
+
     // Update checkout request table.
     this.updateCheckoutRequestsTable();
     this.requestTable?.refreshTable();
@@ -73,11 +74,25 @@ export class AmbassadorEquipmentComponent implements OnInit {
       selected_id: null
     };
 
-    //TODO: make a call to populate the id_options property of stagedRequest
+    // Populate id_options for staged request
+    let equipment_list = this.equipmentService.getAllEquipmentByModel(
+      stagedRequest.model
+    );
+    equipment_list.subscribe({
+      next(equipment_arr) {
+        equipment_arr.forEach((item) => {
+          stagedRequest.id_choices?.push(item.equipment_id);
+        });
+      },
+      complete: () => {
+        this.stagedCheckoutRequests.push(stagedRequest);
+        this.stageTable?.refreshTable();
+      }
+    });
 
     // Add stagedRequest to list of staged request models to be displayed in the stage widget
-    this.stagedCheckoutRequests.push(stagedRequest);
-    this.stageTable?.refreshTable();
+    // this.stagedCheckoutRequests.push(stagedRequest);
+    // this.stageTable?.refreshTable();
   }
 
   cancelRequest(request: CheckoutRequestModel) {

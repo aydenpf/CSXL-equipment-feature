@@ -98,4 +98,15 @@ export class EquipmentService {
   approveRequest(request: CheckoutRequestModel) {
     console.log('Approved');
   }
+
+  /**
+   * Retrieve all Equipment of a specific model type
+   * @param model of the equipment to be retrieved
+   * @returns list of equipment
+   */
+  getAllEquipmentByModel(model: String): Observable<Equipment[]> {
+    return this.http.get<Equipment[]>(
+      `/api/equipment/get_equipment_for_request/${model}`
+    );
+  }
 }
