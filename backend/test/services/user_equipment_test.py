@@ -3,13 +3,22 @@
 from unittest.mock import create_autospec
 
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
+from backend.models.user import User
 from .reset_table_id_seq import reset_table_id_seq
 from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
 from backend.models.role import Role
-from backend.services.exceptions import UserPermissionException
+from backend.services.exceptions import (
+    EquipmentNotFoundException,
+    UserPermissionException,
+    WaiverNotSignedException,
+)
 from ...models.equipment import Equipment
-from ...services.equipment import EquipmentService
+from ...services.equipment import (
+    DuplicateEquipmentCheckoutRequestException,
+    EquipmentCheckoutRequestNotFoundException,
+    EquipmentService,
+)
 from ...services.user import UserService
 import pytest
 from sqlalchemy.orm import Session
@@ -186,10 +195,6 @@ def test_get_all_requests_not_authorized(equipment_service: EquipmentService):
 
     except Exception as e:
         assert True
-    # with pytest.raises(Exception) as e:
-    #     equipment_service.get_all_requests(user)
-    #     # Fail test if no exception is thrown
-    #     pytest.fail()
 
 
 def test_get_all_requests_returns_correct_requests(equipment_service: EquipmentService):
@@ -238,7 +243,89 @@ def test_delete_requests_not_authorized(equipment_service: EquipmentService):
         equipment_service.delete_request(user, to_delete)
     except Exception as e:
         assert True
-    # with pytest.raises(Exception) as e:
-    #     equipment_service.delete_request(user, to_delete)
-    #     # Fail test if no exception is thrown
-    #     pytest.fail()
+
+
+def test_get_requested_equipment(equipment_service: EquipmentService):
+    """Tests for correct available equipment for request"""
+    equipment_service._permission = create_autospec(equipment_service._permission)
+    available_equipment = equipment_service.get_equipment_for_request(
+        ambassador, "Meta Quest 3"
+    )
+
+    assert len(available_equipment) == 1
+    assert isinstance(available_equipment[0], Equipment)
+
+
+def test_get_requested_equipment_none_available(equipment_service: EquipmentService):
+    """Tests for return of empty list for no available equipment"""
+    equipment_service._permission = create_autospec(equipment_service._permission)
+    available_equipment = equipment_service.get_equipment_for_request(
+        ambassador, "Oculus"
+    )
+
+    assert len(available_equipment) == 0
+
+
+def test_waiver_not_signed_exception(equipment_service: EquipmentService):
+    """Tests a WaiverNotSignedException is thrown"""
+
+    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    user = User(
+        id=3,
+        pid=111111111,
+        onyen="user",
+        email="user@unc.edu",
+        first_name="Sally",
+        last_name="Student",
+        pronouns="She / They",
+        signed_equipment_wavier=False,
+    )
+    try:
+        equipment_service.add_request(request, user)
+    except WaiverNotSignedException as e:
+        assert True
+
+
+def test_duplicate_request_exception(equipment_service: EquipmentService):
+    """Tests a DuplicateEquipmentCheckoutRequestException is thrown"""
+
+    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    request_two = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    user = User(
+        id=3,
+        pid=111111111,
+        onyen="user",
+        email="user@unc.edu",
+        first_name="Sally",
+        last_name="Student",
+        pronouns="She / They",
+        signed_equipment_wavier=True,
+    )
+
+    try:
+        equipment_service.add_request(request, user)
+        equipment_service.add_request(request_two, user)
+    except DuplicateEquipmentCheckoutRequestException as e:
+        assert True
+
+
+def test_equipment_request_not_found(equipment_service: EquipmentService):
+    """Tests a EquipmentCheckoutRequestNotFoundException is thrown"""
+
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=123456789)
+
+    try:
+        equipment_service.delete_request(ambassador, request)
+    except EquipmentCheckoutRequestNotFoundException as e:
+        assert True
+
+
+def test_add_request(equipment_service: EquipmentService):
+    """Tests adding a request properly creates and adds equipment request"""
+
+    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=123456789)
+
+    request = equipment_service.add_request(request, ambassador)
+    assert isinstance(request, EquipmentCheckoutRequest)
