@@ -11,6 +11,7 @@ import { Profile } from 'src/app/models.module';
 import { Subscription } from 'rxjs';
 import { ProfileService } from 'src/app/profile/profile.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'equipment-card',
@@ -48,16 +49,18 @@ export class EquipmentCard {
           console.log('success!');
           this.router.navigateByUrl('/equipment/checkout');
         },
-        error: (error) => this.onError(error)
+        error: (error) => {
+          if (error instanceof HttpErrorResponse) {
+            this.onError(error);
+          } else {
+            console.log(error);
+          }
+        }
       });
     }
   }
 
-  onError(err: any) {
-    this.snackBar.open(
-      'You already have a checkout request for this item',
-      '',
-      { duration: 4000 }
-    );
+  onError(err: HttpErrorResponse) {
+    this.snackBar.open(err.error.detail, '', { duration: 4000 });
   }
 }
