@@ -1,6 +1,7 @@
 """Tests for the equipment service"""
 
 from unittest.mock import create_autospec
+from backend.entities.user_entity import UserEntity
 
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 from backend.models.user import User
@@ -38,6 +39,10 @@ def equipment_service(session: Session):
 @pytest.fixture(autouse=True)
 def fake_data_fixture(session: Session):
     """Inserts fake data to the test session."""
+
+    # Add user for testing purposes
+    user_entity = UserEntity.from_model(user)
+    session.add(user_entity)
 
     # Add ambassador role for testing permissions specific to ambassadors.
     ambassador_role = Role(id=2, name="ambassadors")
@@ -347,19 +352,9 @@ def test_add_request(equipment_service: EquipmentService):
 
 def test_update_wavier_signed_field_unsigned(equipment_service: EquipmentService):
     """Tests that the service properly updates the waiver signed field when its unsigned."""
-    root = User(
-        id=1,
-        pid=999999999,
-        onyen="root",
-        email="root@unc.edu",
-        first_name="Rhonda",
-        last_name="Root",
-        pronouns="She / Her / Hers",
-        signed_equipment_wavier=False,
-    )
 
-    root = equipment_service.update_waiver_signed_field(root)
-    assert root.signed_equipment_wavier == True
+    updated_user = equipment_service.update_waiver_signed_field(user)
+    assert updated_user.signed_equipment_wavier == True
 
 
 def test_update_wavier_signed_field_user_not_found(equipment_service: EquipmentService):

@@ -117,24 +117,8 @@ equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
 
 checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
 
-root = User(
-    id=1,
-    pid=999999999,
-    onyen="root",
-    email="root@unc.edu",
-    first_name="Rhonda",
-    last_name="Root",
-    pronouns="She / Her / Hers",
-    signed_equipment_wavier=False,
-)
-
-
 def insert_fake_data(session: Session):
     global equipment
-
-    # add user for testing update wavier methods
-    entity = UserEntity.from_model(root)
-    session.add(entity)
 
     # Create entities for test equipment data
     entities = []
