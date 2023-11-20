@@ -273,7 +273,9 @@ def test_get_requested_equipment_none_available(equipment_service: EquipmentServ
 def test_waiver_not_signed_exception(equipment_service: EquipmentService):
     """Tests a WaiverNotSignedException is thrown"""
 
-    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    request = EquipmentCheckoutRequest(
+        user_name="Kris", model="Meta Quest 3", pid=111111111
+    )
     user = User(
         id=3,
         pid=111111111,
@@ -293,8 +295,12 @@ def test_waiver_not_signed_exception(equipment_service: EquipmentService):
 def test_duplicate_request_exception(equipment_service: EquipmentService):
     """Tests a DuplicateEquipmentCheckoutRequestException is thrown"""
 
-    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
-    request_two = EquipmentCheckoutRequest(model="Meta Quest 3", pid=111111111)
+    request = EquipmentCheckoutRequest(
+        user_name="Kris", model="Meta Quest 3", pid=111111111
+    )
+    request_two = EquipmentCheckoutRequest(
+        user_name="Kris", model="Meta Quest 3", pid=111111111
+    )
     user = User(
         id=3,
         pid=111111111,
@@ -318,7 +324,9 @@ def test_equipment_request_not_found(equipment_service: EquipmentService):
 
     equipment_service._permission = create_autospec(equipment_service._permission)
 
-    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=123456789)
+    request = EquipmentCheckoutRequest(
+        user_name="Kris", model="Meta Quest 3", pid=123456789
+    )
 
     try:
         equipment_service.delete_request(ambassador, request)
@@ -329,7 +337,9 @@ def test_equipment_request_not_found(equipment_service: EquipmentService):
 def test_add_request(equipment_service: EquipmentService):
     """Tests adding a request properly creates and adds equipment request"""
 
-    request = EquipmentCheckoutRequest(model="Meta Quest 3", pid=123456789)
+    request = EquipmentCheckoutRequest(
+        user_name="Kris", model="Meta Quest 3", pid=123456789
+    )
 
     request = equipment_service.add_request(request, ambassador)
     assert isinstance(request, EquipmentCheckoutRequest)
