@@ -7,8 +7,13 @@ from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
 from backend.models.user import User
+from backend.services.exceptions import WaiverNotSignedException
 from ...models.equipment import Equipment
-from ...services.equipment import EquipmentService
+from ...services.equipment import (
+    DuplicateEquipmentCheckoutRequestException,
+    EquipmentCheckoutRequestNotFoundException,
+    EquipmentService,
+)
 
 from backend.api.authentication import registered_user
 
@@ -104,11 +109,17 @@ def add_request(
         Newly created equipment checkout request
 
     Raises:
-        WaiverNotSignedException if user has not signed waiver
+        WavierNotSignedException if user has not signed waiver
 
     """
-
-    return equipmentService.add_request(equipmentCheckoutRequest, subject)
+    try:
+        # attempt to add a checkout request
+        return equipmentService.add_request(equipmentCheckoutRequest, subject)
+    except DuplicateEquipmentCheckoutRequestException as e:
+        # raise http exception if user has already requested to check out an item of the same model
+        raise HTTPException(status_code=403, detail=str(e))
+    except WaiverNotSignedException as e:
+        raise HTTPException(status_code=451, detail=str(e))
 
 
 @api.delete("/delete_request", tags=["Equipment"])
@@ -132,7 +143,12 @@ def delete_request(
         EquipmentCheckoutRequestNotFoundException if request does not exist
     """
 
-    return equipmentService.delete_request(subject, equipmentCheckoutRequest)
+    try:
+        # attempt to delete a checkout request
+        return equipmentService.delete_request(subject, equipmentCheckoutRequest)
+    except EquipmentCheckoutRequestNotFoundException as e:
+        # raise http exception if the checkout request to be deleted is not found
+        raise HTTPException(status_code=422, detail=str(e))
 
 
 @api.get("/get_all_requests", tags=["Equipment"])

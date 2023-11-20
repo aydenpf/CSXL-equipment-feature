@@ -197,7 +197,6 @@ class EquipmentService:
             request (EquipmentCheckoutRequest): the request to be deleted
         """
 
-        # TODO: enforce permission
         self._permission.enforce(
             subject, "equipment.delete_request", resource="equipment"
         )
@@ -251,20 +250,26 @@ class EquipmentService:
         return [result.to_model() for result in self._session.scalars(query).all()]
 
     def update_waiver_signed_field(self, user: User) -> User:
+        """Updates the signed_equipment_waiver field of a user after they have signed a waiver"""
+        # create new user model that is the same as the one to be updated,
+        # but with the signed_equipment_waiver being true
         updated_user: User = user
         updated_user.signed_equipment_wavier = True
 
+        # query for user to be updated
         query = select(UserEntity).where(UserEntity.pid == user.pid)
         entity_item: UserEntity | None = self._session.scalar(query)
 
+        # if user was found, update signed waiver field
         if entity_item:
             entity_item.update(updated_user)
 
             self._session.commit()
             return entity_item.to_model()
 
+        # if user not found, raise exception
         else:
-            raise Exception()
+            raise Exception(f"Could not find user {user.first_name} {user.last_name}")
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:
