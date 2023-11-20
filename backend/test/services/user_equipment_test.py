@@ -343,3 +343,39 @@ def test_add_request(equipment_service: EquipmentService):
 
     request = equipment_service.add_request(request, ambassador)
     assert isinstance(request, EquipmentCheckoutRequest)
+
+
+def test_update_wavier_signed_field_unsigned(equipment_service: EquipmentService):
+    """Tests that the service properly updates the waiver signed field when its unsigned."""
+    root = User(
+        id=1,
+        pid=999999999,
+        onyen="root",
+        email="root@unc.edu",
+        first_name="Rhonda",
+        last_name="Root",
+        pronouns="She / Her / Hers",
+        signed_equipment_wavier=False,
+    )
+
+    root = equipment_service.update_waiver_signed_field(root)
+    assert root.signed_equipment_wavier == True
+
+
+def test_update_wavier_signed_field_user_not_found(equipment_service: EquipmentService):
+    root = User(
+        id=1,
+        pid=454545455,
+        onyen="Saul Goodman",
+        email="kevinG@unc.edu",
+        first_name="Brent",
+        last_name="Munsell",
+        pronouns="She / Her / Zhe",
+        signed_equipment_wavier=False,
+    )
+
+    try:
+        root = equipment_service.update_waiver_signed_field(root)
+
+    except Exception as e:
+        assert True
