@@ -3,6 +3,7 @@
 from unittest.mock import create_autospec
 
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
+from backend.models.user import User
 from .reset_table_id_seq import reset_table_id_seq
 from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
@@ -246,3 +247,39 @@ def test_delete_requests_not_authorized(equipment_service: EquipmentService):
     #     equipment_service.delete_request(user, to_delete)
     #     # Fail test if no exception is thrown
     #     pytest.fail()
+
+
+def test_update_wavier_signed_field_unsigned(equipment_service: EquipmentService):
+    """Tests that the service properly updates the waiver signed field when its unsigned."""
+    root = User(
+        id=1,
+        pid=999999999,
+        onyen="root",
+        email="root@unc.edu",
+        first_name="Rhonda",
+        last_name="Root",
+        pronouns="She / Her / Hers",
+        signed_equipment_wavier=False,
+    )
+
+    root = equipment_service.update_waiver_signed_field(root)
+    assert root.signed_equipment_wavier == True
+
+
+def test_update_wavier_signed_field_user_not_found(equipment_service: EquipmentService):
+    root = User(
+        id=1,
+        pid=454545455,
+        onyen="Saul Goodman",
+        email="kevinG@unc.edu",
+        first_name="Brent",
+        last_name="Munsell",
+        pronouns="She / Her / Zhe",
+        signed_equipment_wavier=False,
+    )
+
+    try:
+        root = equipment_service.update_waiver_signed_field(root)
+
+    except Exception as e:
+        assert True

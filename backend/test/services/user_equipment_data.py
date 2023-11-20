@@ -8,9 +8,11 @@ from backend.entities.equipment_checkout_request_entity import (
     EquipmentCheckoutRequestEntity,
 )
 from backend.entities.permission_entity import PermissionEntity
+from backend.entities.user_entity import UserEntity
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.permission import Permission
+from backend.models.user import User
 from backend.test.services.role_data import ambassador_role
 from .reset_table_id_seq import reset_table_id_seq
 from ...entities.equipment_entity import EquipmentEntity
@@ -115,9 +117,24 @@ equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
 
 checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
 
+root = User(
+    id=1,
+    pid=999999999,
+    onyen="root",
+    email="root@unc.edu",
+    first_name="Rhonda",
+    last_name="Root",
+    pronouns="She / Her / Hers",
+    signed_equipment_wavier=False,
+)
+
 
 def insert_fake_data(session: Session):
     global equipment
+
+    # add user for testing update wavier methods
+    entity = UserEntity.from_model(root)
+    session.add(entity)
 
     # Create entities for test equipment data
     entities = []
