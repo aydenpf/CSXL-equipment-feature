@@ -12,11 +12,13 @@ from backend.entities.user_entity import UserEntity
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
+from backend.models.equipment_checkout import EquipmentCheckout
 from .permission import PermissionService
 
 from ..database import db_session
 from ..models.equipment import Equipment
 from ..entities.equipment_entity import EquipmentEntity
+from ..entities.equipment_checkout_entity import EquipmentCheckoutEntity
 from ..models import User
 
 from .exceptions import EquipmentNotFoundException, WaiverNotSignedException
@@ -140,7 +142,8 @@ class EquipmentService:
                 equipment_types.append(new_type)
 
         return equipment_types
-
+      
+      
     def add_request(
         self, request: EquipmentCheckoutRequest, user: User
     ) -> EquipmentCheckoutRequest:
@@ -232,6 +235,7 @@ class EquipmentService:
         # convert the query results into 'EquipmentReservationRequest' models and return as a list
         return [result.to_model() for result in query_result]
 
+      
     def get_equipment_for_request(self, subject: User, model: str) -> list[Equipment]:
         """returns a list of all available equipment corresponding to the checkout request's model"""
 
@@ -249,6 +253,7 @@ class EquipmentService:
         # return list of queried equipment entities as equipment models
         return [result.to_model() for result in self._session.scalars(query).all()]
 
+      
     def update_waiver_signed_field(self, user: User) -> User:
         """Updates the signed_equipment_waiver field of a user after they have signed a waiver"""
         # create new user model that is the same as the one to be updated,
@@ -270,6 +275,19 @@ class EquipmentService:
         # if user not found, raise exception
         else:
             raise Exception(f"Could not find user {user.first_name} {user.last_name}")
+            
+            
+    def get_all_active_checkouts(self) -> list[EquipmentCheckout]:
+        # TODO: add permissions for this method
+        # Create the query for getting all equipment checkout entities.
+        query = select(EquipmentCheckoutEntity).where(
+            EquipmentCheckoutEntity.is_active == True
+        )
+        # execute the query grabbing each row from the equipment table
+        query_result = self._session.scalars(query).all()
+        # convert the query results into 'Equipment' models and return as a list
+        return [result.to_model() for result in query_result]
+
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:

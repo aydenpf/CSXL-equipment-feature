@@ -3,6 +3,8 @@
 This API is used to manage and list user equipment checkouts"""
 
 from fastapi import APIRouter, Depends, HTTPException
+
+from backend.models.equipment_checkout import EquipmentCheckout
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
@@ -142,7 +144,6 @@ def delete_request(
     Raises:
         EquipmentCheckoutRequestNotFoundException if request does not exist
     """
-
     try:
         # attempt to delete a checkout request
         return equipmentService.delete_request(subject, equipmentCheckoutRequest)
@@ -213,3 +214,19 @@ def update_waiver_field(
     except Exception as e:
         # Raise exception if field cannot be updated
         raise HTTPException(status_code=422, detail=str(e))
+
+@api.get("/get_all_active_checkouts", tags=["Equipment"])
+def get_all_active_checkouts(
+    equipment_service: EquipmentService = Depends(),
+) -> list[EquipmentCheckout]:
+    """
+    Gets equipment checkouts
+
+    Parameters:
+        equipment_service: a valid 'EquipmentService'
+
+    Returns:
+        Array of equipment checkouts
+    """
+
+    return equipment_service.get_all_active_checkouts()
