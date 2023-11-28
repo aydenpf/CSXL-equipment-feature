@@ -15,11 +15,11 @@ __license__ = "MIT"
 
 
 class EquipmentCheckoutEntity(EntityBase):
-    """Serves as the database model schema defining the shape of the `Equipment` table"""
+    """Serves as the database model schema defining the shape of the `Equipment Checkout` table"""
 
     # Name for the equipment checkout table in the PostgreSQL database
 
-    __tablename__ = "equipment_checkout"
+    __tablename__ = "equipment_checkouts"
 
     # Unique ID for the equipment checkout entry
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

@@ -142,8 +142,7 @@ class EquipmentService:
                 equipment_types.append(new_type)
 
         return equipment_types
-      
-      
+
     def add_request(
         self, request: EquipmentCheckoutRequest, user: User
     ) -> EquipmentCheckoutRequest:
@@ -235,7 +234,6 @@ class EquipmentService:
         # convert the query results into 'EquipmentReservationRequest' models and return as a list
         return [result.to_model() for result in query_result]
 
-      
     def get_equipment_for_request(self, subject: User, model: str) -> list[Equipment]:
         """returns a list of all available equipment corresponding to the checkout request's model"""
 
@@ -253,7 +251,6 @@ class EquipmentService:
         # return list of queried equipment entities as equipment models
         return [result.to_model() for result in self._session.scalars(query).all()]
 
-      
     def update_waiver_signed_field(self, user: User) -> User:
         """Updates the signed_equipment_waiver field of a user after they have signed a waiver"""
         # create new user model that is the same as the one to be updated,
@@ -275,9 +272,14 @@ class EquipmentService:
         # if user not found, raise exception
         else:
             raise Exception(f"Could not find user {user.first_name} {user.last_name}")
-            
-            
+
     def get_all_active_checkouts(self) -> list[EquipmentCheckout]:
+        """
+        Gets all checkouts that are "active" i.e. that item is currently checked out
+
+        Returns:
+            An array of all EquipmentCheckouts, as models, that are "active"
+        """
         # TODO: add permissions for this method
         # Create the query for getting all equipment checkout entities.
         query = select(EquipmentCheckoutEntity).where(
@@ -288,6 +290,28 @@ class EquipmentService:
         # convert the query results into 'Equipment' models and return as a list
         return [result.to_model() for result in query_result]
 
+    def create_checkout(self, checkout: EquipmentCheckout, subject: User):
+        """
+        Creates a new checkout entity and adds it to the database
+
+        Args:
+            Request (EquipmentCheckout): the checkout to add.
+            user (User): User that is trying to
+
+        Returns:
+            The checkout that was added
+
+        """
+        # TODO: is this right??
+        self._permission.enforce(subject, "equipment.update", "equipment")
+
+        equipment_checkout_entity = EquipmentCheckoutEntity.from_model(checkout)
+
+        # add new object to table and commit changes
+        self._session.add(equipment_checkout_entity)
+        self._session.commit()
+
+        return equipment_checkout_entity.to_model()
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:

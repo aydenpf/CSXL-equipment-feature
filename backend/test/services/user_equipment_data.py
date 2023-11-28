@@ -4,12 +4,14 @@
 
 import pytest
 from sqlalchemy.orm import Session
+from backend.entities.equipment_checkout_entity import EquipmentCheckoutEntity
 from backend.entities.equipment_checkout_request_entity import (
     EquipmentCheckoutRequestEntity,
 )
 from backend.entities.permission_entity import PermissionEntity
 from backend.entities.user_entity import UserEntity
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
+from datetime import datetime
 
 from backend.models.permission import Permission
 from backend.models.user import User
@@ -17,6 +19,7 @@ from backend.test.services.role_data import ambassador_role
 from .reset_table_id_seq import reset_table_id_seq
 from ...entities.equipment_entity import EquipmentEntity
 from ...models.equipment import Equipment
+from ...models.equipment_checkout import EquipmentCheckout
 from enum import Enum
 
 
@@ -106,6 +109,16 @@ ambassador_permission_get_all_requested = Permission(
     id=7, action="equipment.get_equipment_for_request", resource="equipment"
 )
 
+equipment_checkout1 = EquipmentCheckout(
+    user_name="Amy",
+    pid=999999999,
+    equipment_id=1,
+    model="Meta Quest 3",
+    is_active=True,
+    started_at=datetime.now(),
+    end_at=datetime.now(),
+)
+
 permissions = [
     ambassador_permission_equipment,
     ambassador_permission_delete_checkout_request,
@@ -116,6 +129,9 @@ permissions = [
 equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
 
 checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
+
+checkouts = []
+
 
 def insert_fake_data(session: Session):
     global equipment
@@ -133,6 +149,12 @@ def insert_fake_data(session: Session):
         entity = EquipmentCheckoutRequestEntity.from_model(item)
         session.add(entity)
         request_entities.append(entity)
+
+    checkout_entities = []
+    for item in checkouts:
+        entity = EquipmentCheckoutEntity.from_model(item)
+        session.add(entity)
+        checkout_entities.append(entity)
 
     # Add ambassador equipment permission for testing
     for i in range(0, len(permissions)):
@@ -154,6 +176,9 @@ def insert_fake_data(session: Session):
         EquipmentCheckoutRequestEntity,
         EquipmentCheckoutRequestEntity.id,
         len(checkout_requests) + 1,
+    )
+    reset_table_id_seq(
+        session, EquipmentCheckoutEntity, EquipmentCheckoutEntity.id, len(checkouts) + 1
     )
 
     # Commit all changes

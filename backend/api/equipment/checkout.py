@@ -215,6 +215,7 @@ def update_waiver_field(
         # Raise exception if field cannot be updated
         raise HTTPException(status_code=422, detail=str(e))
 
+
 @api.get("/get_all_active_checkouts", tags=["Equipment"])
 def get_all_active_checkouts(
     equipment_service: EquipmentService = Depends(),
@@ -230,3 +231,21 @@ def get_all_active_checkouts(
     """
 
     return equipment_service.get_all_active_checkouts()
+
+
+@api.post("/create_checkout", tags=["Equipment"])
+def create_equipment_checkout(
+    checkout: EquipmentCheckout,
+    equipment_service: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> EquipmentCheckout:
+    """
+    Creates an equipment checkout
+
+    Params:
+        checkout: An EquipmentCheckout Model
+        equipment_service: a valid 'EquipmentService'
+        subject: a valid User model representing the currently logged in User
+    """
+
+    return equipment_service.create_checkout(checkout, subject)
