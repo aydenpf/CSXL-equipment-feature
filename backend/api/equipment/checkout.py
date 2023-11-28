@@ -219,6 +219,7 @@ def update_waiver_field(
 @api.get("/get_all_active_checkouts", tags=["Equipment"])
 def get_all_active_checkouts(
     equipment_service: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
 ) -> list[EquipmentCheckout]:
     """
     Gets equipment checkouts
@@ -230,7 +231,7 @@ def get_all_active_checkouts(
         Array of equipment checkouts
     """
 
-    return equipment_service.get_all_active_checkouts()
+    return equipment_service.get_all_active_checkouts(subject)
 
 
 @api.post("/create_checkout", tags=["Equipment"])

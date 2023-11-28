@@ -109,6 +109,14 @@ ambassador_permission_get_all_requested = Permission(
     id=7, action="equipment.get_equipment_for_request", resource="equipment"
 )
 
+ambassador_permission_get_all_active_checkouts = Permission(
+    id=8, action="equipment.get_all_active_checkouts", resource="equipment"
+)
+
+ambassador_permission_create_checkout = Permission(
+    id=9, action="equipment.create_checkout", resource="equipment"
+)
+
 equipment_checkout1 = EquipmentCheckout(
     user_name="Amy",
     pid=999999999,
@@ -119,18 +127,40 @@ equipment_checkout1 = EquipmentCheckout(
     end_at=datetime.now(),
 )
 
+equipment_checkout2 = EquipmentCheckout(
+    user_name="Sally",
+    pid=111111111,
+    equipment_id=2,
+    model="Arduino Uno",
+    is_active=True,
+    started_at=datetime.now(),
+    end_at=datetime.now(),
+)
+
+equipment_checkout3 = EquipmentCheckout(
+    user_name="Sally",
+    pid=111111111,
+    equipment_id=3,
+    model="Arduino Uno",
+    is_active=False,
+    started_at=datetime.now(),
+    end_at=datetime.now(),
+)
+
 permissions = [
     ambassador_permission_equipment,
     ambassador_permission_delete_checkout_request,
     ambassador_permission_get_all_requests,
     ambassador_permission_get_all_requested,
+    ambassador_permission_get_all_active_checkouts,
+    ambassador_permission_create_checkout,
 ]
 
 equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
 
 checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
 
-checkouts = []
+checkouts = [equipment_checkout1, equipment_checkout2, equipment_checkout3]
 
 
 def insert_fake_data(session: Session):
