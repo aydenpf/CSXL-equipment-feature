@@ -2,6 +2,7 @@
 The equipment service allows the API to manipulate equipment in the database.
 """
 
+from datetime import datetime
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -50,6 +51,15 @@ class EquipmentAlreadyCheckedOutException(Exception):
 
     def __init__(self, id: int):
         super().__init__(f"Equipment item with id: {id} is already checkout out")
+
+
+class EquipmentCheckoutNotFoundException(Exception):
+    """EquipmentCheckoutNotFoundException is raised when a user tries to return a checkout that is not found in the database"""
+
+    def __init__(self, id: int):
+        super().__init__(
+            f"Could not find active checkout for equipment item with id: {id}"
+        )
 
 
 class EquipmentService:
@@ -337,6 +347,7 @@ class EquipmentService:
     ) -> EquipmentCheckout:
         """
         Creates a new checkout entity and adds it to the database
+        Updates the is_checked_out field of the equipment item being checked out to be True
 
         Args:
             Request (EquipmentCheckout): the checkout to add.
@@ -345,12 +356,15 @@ class EquipmentService:
         Returns:
             The checkout that was added
 
+        Raises:
+            EquipmentAlreadyCheckedOutException if the equipment already has an active
+            checkout associated with it
         """
         self._permission.enforce(subject, "equipment.create_checkout", "equipment")
 
         equipment_checkout_entity = EquipmentCheckoutEntity.from_model(checkout)
 
-        # add new object to table and commit changes
+        # add new object to table
         self._session.add(equipment_checkout_entity)
 
         # get equipment model to be updated
@@ -368,6 +382,65 @@ class EquipmentService:
         self._session.commit()
 
         return equipment_checkout_entity.to_model()
+
+    def return_checkout(
+        self, checkout: EquipmentCheckout, subject: User
+    ) -> EquipmentCheckout:
+        """
+        Changes the is_active field of the checkout being returned to False
+        Changes the end_at field of the checkout to the time of the return
+        Changes the is_checked_out field of the equipment item being returned to be False
+
+        Args:
+            checkout (EquipmentCheckout): the checkout being returned
+            subject (User): the user confirming the checkout return
+
+        Returns:
+            the checkout that was returned
+
+        Raises:
+            Exception if checkout to be returned is not active
+            EquipmentCheckoutNotFoundException if checkout to be returned is not found in the database
+        """
+        # enforce authorization
+        # TODO add method specific permission
+        self._permission.enforce(subject, "equipment.create_checkout", "equipment")
+        # ensure that checkout is active
+        if not checkout.is_active:
+            raise Exception("The equipment you are trying to return is not checked out")
+
+        # get equipment model to be updated
+        equipment_item: Equipment = self.get_equipment_by_id(
+            checkout.equipment_id, subject
+        )
+        # change is_checked_out field to false
+        equipment_item.is_checked_out = False
+        # update equipment entity to be checked out
+        self.update(equipment_item, subject)
+
+        # get matching checkout from the db
+        # matching equipment_id and is_active will ensure it is the same
+        # checkout, there can only be one active checkout at once for a given item
+        query = select(EquipmentCheckoutEntity).where(
+            EquipmentCheckoutEntity.equipment_id == checkout.equipment_id,
+            EquipmentCheckoutEntity.is_active == checkout.is_active,
+        )
+        entity_item: EquipmentCheckoutEntity | None = self._session.scalar(query)
+
+        # set time that the return happened
+        checkout.end_at = datetime.now()
+        # set is_active to false
+        checkout.is_active = False
+
+        # if matching checkout exists, update it
+        if entity_item:
+            entity_item.update(checkout)
+
+            self._session.commit()
+            return entity_item.to_model()
+        # if no checkout was found, raise exception
+        else:
+            raise EquipmentCheckoutNotFoundException(checkout.equipment_id)
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:

@@ -20,6 +20,7 @@ from ...models.equipment import Equipment
 from ...services.equipment import (
     DuplicateEquipmentCheckoutRequestException,
     EquipmentAlreadyCheckedOutException,
+    EquipmentCheckoutNotFoundException,
     EquipmentCheckoutRequestNotFoundException,
     EquipmentService,
 )
@@ -54,7 +55,7 @@ def fake_data_fixture(session: Session):
     session.add(user_entity)
 
     # Add ambassador role for testing permissions specific to ambassadors.
-    ambassador_role = Role(id=2, name="ambassadors")
+    ambassador_role: Role = Role(id=2, name="ambassadors")
     entity = RoleEntity.from_model(ambassador_role)
     session.add(entity)
     session.commit()
@@ -532,7 +533,6 @@ def test_create_checkout_does_not_add_inactive_checkout_to_active_checkouts(
 
 def test_create_checkout_not_authorozed(equipment_service: EquipmentService):
     """Tests that checkout cannot be created when the user does not have ambassador permissions"""
-    equipment_service._permission = create_autospec(equipment_service._permission)
 
     to_add = EquipmentCheckout(
         user_name="Drake",
@@ -546,6 +546,7 @@ def test_create_checkout_not_authorozed(equipment_service: EquipmentService):
 
     try:
         equipment_service.create_checkout(to_add, user)
+        pytest.fail()
     except Exception as e:
         assert True
 
@@ -595,4 +596,92 @@ def test_create_checkout_does_not_work_on_checked_out_equipment(
         equipment_service.create_checkout(to_add, ambassador)
         pytest.fail()
     except EquipmentAlreadyCheckedOutException as e:
+        assert True
+
+
+def test_return_checkout_updates_is_active(equipment_service: EquipmentService):
+    """Tests that return_checkout changes the is_active field in the given checkout to False"""
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    returned_item = equipment_service.return_checkout(checkouts[1], ambassador)
+
+    assert not returned_item.is_active
+
+
+def test_return_checkout_changes_end_time(equipment_service: EquipmentService):
+    """
+    Tests that return_checkout changes end_at field of the checkout
+    This test only checks that the end time changes, checking that it changes
+    to the correct time will need to be done manually
+    """
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    end_time = checkouts[1].end_at
+
+    changed_end_time = equipment_service.return_checkout(
+        checkouts[1], ambassador
+    ).end_at
+
+    assert end_time != changed_end_time
+
+
+def test_return_checkout_changes_equipment_entity(equipment_service: EquipmentService):
+    """
+    Tests that return_checkout changes the is_checked_out field of the equipment
+    item that is being returned
+    """
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    equipment_service.return_checkout(checkouts[1], ambassador)
+
+    updated_equipment_item: Equipment = equipment_service.get_equipment_by_id(
+        checkouts[1].equipment_id, ambassador
+    )
+    assert not updated_equipment_item.is_checked_out
+
+
+def test_return_checkout_error_if_checkout_not_active(
+    equipment_service: EquipmentService,
+):
+    """Tests that return_checkout raises an Exception if the checkout to be returned is not active"""
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    try:
+        equipment_service.return_checkout(checkouts[2], ambassador)
+        pytest.fail()
+    except Exception as e:
+        assert True
+
+
+def test_return_checkout_error_if_not_in_db(equipment_service: EquipmentService):
+    """
+    Tests that return_checkout raises EquipmentCheckoutNotFoundException if checkout
+    to be returned is not found in the database
+    """
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    to_return = EquipmentCheckout(
+        user_name="Darius Garland",
+        pid=222333444,
+        equipment_id=1,
+        model="Meta Quest 3",
+        is_active=True,
+        started_at=datetime.datetime.now(),
+        end_at=datetime.datetime.now(),
+    )
+
+    try:
+        equipment_service.return_checkout(to_return, ambassador)
+        pytest.fail()
+    except EquipmentCheckoutNotFoundException as e:
+        assert True
+
+
+def test_return_checkout_not_authorized(equipment_service: EquipmentService):
+    """Tests that checkout cannot be returned when user does not have ambassador permissions"""
+
+    try:
+        equipment_service.return_checkout(checkouts[1], user)
+        pytest.fail()
+    except Exception as e:
         assert True
