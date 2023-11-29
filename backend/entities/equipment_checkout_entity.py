@@ -15,11 +15,11 @@ __license__ = "MIT"
 
 
 class EquipmentCheckoutEntity(EntityBase):
-    """Serves as the database model schema defining the shape of the `Equipment` table"""
+    """Serves as the database model schema defining the shape of the `Equipment Checkout` table"""
 
     # Name for the equipment checkout table in the PostgreSQL database
 
-    __tablename__ = "equipment_checkout"
+    __tablename__ = "equipment_checkouts"
 
     # Unique ID for the equipment checkout entry
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -79,3 +79,25 @@ class EquipmentCheckoutEntity(EntityBase):
             started_at=self.started_at,
             end_at=self.end_at,
         )
+
+    def update(self, model: EquipmentCheckout) -> None:
+        """
+        Update an EquipmentCheckoutEntity from an EquipmentCheckout model.
+
+        Args:
+            model (EquipmentCheckout): The model to update the entity from.
+
+        Returns:
+            None
+        """
+        # start time will guarantee same unique checkout and will never need to be updated
+        if model.started_at != self.started_at:
+            raise ReferenceError(
+                "Failed to update EquipmentCheckoutEntity because model start time did not match entity start time"
+            )
+
+        self.user_name = model.user_name
+        self.pid = model.pid
+        self.equipment_id = model.equipment_id
+        self.is_active = model.is_active
+        self.end_at = model.end_at
