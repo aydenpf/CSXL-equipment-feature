@@ -436,7 +436,7 @@ def test_get_all_active_checkouts_does_not_return_inactive_checkouts(
         ambassador, "equipment.get_all_active_checkouts", "equipment"
     )
 
-    assert len(fetched_checkouts) == 2
+    assert len(fetched_checkouts) == 5
 
 
 def test_get_all_active_checkouts_not_authorized(equipment_service: EquipmentService):
@@ -496,8 +496,8 @@ def test_create_checkout_adds_to_active_checkouts(equipment_service: EquipmentSe
     # )
 
     fetched_checkouts = equipment_service.get_all_active_checkouts(ambassador)
-    assert len(fetched_checkouts) == 3
-    assert fetched_checkouts[2] == to_add
+    assert len(fetched_checkouts) == 6
+    assert fetched_checkouts[5] == to_add
 
 
 def test_create_checkout_does_not_add_inactive_checkout_to_active_checkouts(
@@ -526,7 +526,7 @@ def test_create_checkout_does_not_add_inactive_checkout_to_active_checkouts(
     # )
 
     fetched_checkouts = equipment_service.get_all_active_checkouts(ambassador)
-    assert len(fetched_checkouts) == 2
+    assert len(fetched_checkouts) == 5
     assert fetched_checkouts[0] == checkouts[0]
     assert fetched_checkouts[1] == checkouts[1]
 
@@ -616,10 +616,10 @@ def test_return_checkout_changes_end_time(equipment_service: EquipmentService):
     """
     equipment_service._permission = create_autospec(equipment_service._permission)
 
-    end_time = checkouts[1].end_at
+    end_time = checkouts[3].end_at
 
     changed_end_time = equipment_service.return_checkout(
-        checkouts[1], ambassador
+        checkouts[3], ambassador
     ).end_at
 
     assert end_time != changed_end_time
@@ -632,10 +632,10 @@ def test_return_checkout_changes_equipment_entity(equipment_service: EquipmentSe
     """
     equipment_service._permission = create_autospec(equipment_service._permission)
 
-    equipment_service.return_checkout(checkouts[1], ambassador)
+    equipment_service.return_checkout(checkouts[4], ambassador)
 
     updated_equipment_item: Equipment = equipment_service.get_equipment_by_id(
-        checkouts[1].equipment_id, ambassador
+        checkouts[4].equipment_id, ambassador
     )
     assert not updated_equipment_item.is_checked_out
 

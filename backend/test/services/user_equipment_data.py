@@ -85,6 +85,36 @@ quest_3_two = Equipment(
     checkout_history=[111111111],
 )
 
+arduino4 = Equipment(
+    equipment_id=6,
+    model="Arduino Uno",
+    equipment_image=DeviceType.ARDUINO_UNO.value,
+    condition=10,
+    is_checked_out=True,
+    condition_notes=[],
+    checkout_history=[],
+)
+
+arduino5 = Equipment(
+    equipment_id=7,
+    model="Arduino Uno",
+    equipment_image=DeviceType.ARDUINO_UNO.value,
+    condition=10,
+    is_checked_out=True,
+    condition_notes=[],
+    checkout_history=[],
+)
+
+arduino6 = Equipment(
+    equipment_id=8,
+    model="Arduino Uno",
+    equipment_image=DeviceType.ARDUINO_UNO.value,
+    condition=10,
+    is_checked_out=True,
+    condition_notes=[],
+    checkout_history=[],
+)
+
 checkout_request_quest_3 = EquipmentCheckoutRequest(
     user_name="Sally Student", model="Meta Quest 3", pid=111111111
 )
@@ -147,6 +177,36 @@ equipment_checkout3 = EquipmentCheckout(
     end_at=datetime.now(),
 )
 
+equipment_checkout4 = EquipmentCheckout(
+    user_name="Nick",
+    pid=730477365,
+    equipment_id=6,
+    model="Arduino Uno",
+    is_active=True,
+    started_at=datetime.now(),
+    end_at=datetime.now(),
+)
+
+equipment_checkout5 = EquipmentCheckout(
+    user_name="David",
+    pid=233455677,
+    equipment_id=7,
+    model="Arduino Uno",
+    is_active=True,
+    started_at=datetime.now(),
+    end_at=datetime.now(),
+)
+
+equipment_checkout6 = EquipmentCheckout(
+    user_name="Kris",
+    pid=988766544,
+    equipment_id=8,
+    model="Arduino Uno",
+    is_active=True,
+    started_at=datetime.now(),
+    end_at=datetime.now(),
+)
+
 permissions = [
     ambassador_permission_equipment,
     ambassador_permission_delete_checkout_request,
@@ -156,11 +216,27 @@ permissions = [
     ambassador_permission_create_checkout,
 ]
 
-equipment = [quest_3, arduino, arduino2, arduino3, quest_3_two]
+equipment = [
+    quest_3,
+    arduino,
+    arduino2,
+    arduino3,
+    quest_3_two,
+    arduino4,
+    arduino5,
+    arduino6,
+]
 
 checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
 
-checkouts = [equipment_checkout1, equipment_checkout2, equipment_checkout3]
+checkouts = [
+    equipment_checkout1,
+    equipment_checkout2,
+    equipment_checkout3,
+    equipment_checkout4,
+    equipment_checkout5,
+    equipment_checkout6,
+]
 
 
 def insert_fake_data(session: Session):
