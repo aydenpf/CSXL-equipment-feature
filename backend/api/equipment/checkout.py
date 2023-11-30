@@ -9,13 +9,13 @@ from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
 from backend.models.user import User
-from backend.services.exceptions import WaiverNotSignedException
 from ...models.equipment import Equipment
 from ...services.equipment import (
     DuplicateEquipmentCheckoutRequestException,
     EquipmentCheckoutNotFoundException,
     EquipmentCheckoutRequestNotFoundException,
     EquipmentService,
+    WaiverNotSignedException
 )
 
 from backend.api.authentication import registered_user
