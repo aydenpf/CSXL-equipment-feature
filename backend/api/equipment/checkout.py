@@ -13,6 +13,7 @@ from backend.services.exceptions import WaiverNotSignedException
 from ...models.equipment import Equipment
 from ...services.equipment import (
     DuplicateEquipmentCheckoutRequestException,
+    EquipmentCheckoutNotFoundException,
     EquipmentCheckoutRequestNotFoundException,
     EquipmentService,
 )
@@ -230,8 +231,11 @@ def get_all_active_checkouts(
     Returns:
         Array of equipment checkouts
     """
-
-    return equipment_service.get_all_active_checkouts(subject)
+    try:
+        return equipment_service.get_all_active_checkouts(subject)
+    # TODO make this the correct exception and status code
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=str(e))
 
 
 @api.post("/create_checkout", tags=["Equipment"])
@@ -242,11 +246,50 @@ def create_equipment_checkout(
 ) -> EquipmentCheckout:
     """
     Creates an equipment checkout
-
+    
     Params:
         checkout: An EquipmentCheckout Model
         equipment_service: a valid 'EquipmentService'
+    Returns:
+        EquipmentCheckout model that was created
+
+    Raises:
+        422 Exception if fails to create checkout
+    """
+    try:
+        return equipment_service.create_checkout(checkout, subject)
+    # TODO make this the correct error and status code, not thinking about this right now
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@api.put("/return_checkout", tags=["Equipment"])
+def return_checkout(
+    checkout: EquipmentCheckout,
+    equipment_service: EquipmentService = Depends(),
+    subject: User = Depends(registered_user),
+) -> EquipmentCheckout:
+    """
+    Returns an equipment checkout
+    
+    Params:
+        checkout: An EquipmentCheckout model
+        equipment_service: a valid 'EquipmentService'
         subject: a valid User model representing the currently logged in User
+
+    Returns:
+        EquipmentCheckout model that was returned
+
+    Raises:
+        404 Exception if equipment being returned is not found
+        422 Exception if equipment being returned is not checked out
     """
 
-    return equipment_service.create_checkout(checkout, subject)
+    try:
+        return equipment_service.return_checkout(checkout, subject)
+    # if Equipment not found, raise 404 exception
+    except EquipmentCheckoutNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    # if other error, error was raised because equipment being returned is not checked out
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=str(e))
