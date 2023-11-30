@@ -255,6 +255,9 @@ def create_equipment_checkout(
 
     Returns:
         EquipmentCheckout model that was created
+
+    Raises:
+        422 Exception if fails to create checkout
     """
     try:
         return equipment_service.create_checkout(checkout, subject)
@@ -279,6 +282,10 @@ def return_checkout(
 
     Returns:
         EquipmentCheckout model that was returned
+
+    Raises:
+        404 Exception if equipment being returned is not found
+        422 Exception if equipment being returned is not checked out
     """
 
     try:
