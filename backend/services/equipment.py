@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session
 from backend.entities.equipment_checkout_request_entity import (
     EquipmentCheckoutRequestEntity,
 )
+from backend.entities.staged_checkout_request_entity import StagedCheckoutRequestEntity
 from backend.entities.user_entity import UserEntity
+from backend.models.StagedCheckoutRequest import StagedCheckoutRequest
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 
 from backend.models.equipment_type import EquipmentType
@@ -270,6 +272,41 @@ class EquipmentService:
         # if user not found, raise exception
         else:
             raise Exception(f"Could not find user {user.first_name} {user.last_name}")
+
+    def get_all_staged_requests(self, subject: User) -> list[StagedCheckoutRequest]:
+        """Return a list of all staged checkout requests in the db"""
+
+        # enforce ambasssador permission
+        self._permission.enforce(
+            subject, "equipment.get_all_requests", resource="equipment"
+        )
+
+        # create the query for getting all equipment checkout request entities.
+        query = select(StagedCheckoutRequestEntity)
+        # execute the query grabbing each row from the equipment table
+        query_result = self._session.scalars(query).all()
+        # convert the query results into 'EquipmentReservationRequest' models and return as a list
+        return [result.to_model() for result in query_result]
+    
+    def create_staged_request(self, subject: User, staged_request: StagedCheckoutRequest) -> StagedCheckoutRequest:
+        """Create a staged checkout request"""
+
+        # enforce ambasssador permission
+        self._permission.enforce(
+            subject, "equipment.create_staged_request", resource="equipment"
+        )
+
+        # create new object
+        staged_checkout_request_entity = StagedCheckoutRequestEntity.from_model(staged_request)
+
+        # add new object to table and commit changes
+        self._session.add(staged_checkout_request_entity)
+        self._session.commit()
+
+        # return added object
+        return staged_checkout_request_entity.to_model()
+    
+    
 
     # TODO: Uncomment during sp02 if we decide to add admin functions for adding/deleting equipment.
     # def add_item(self, item: Equipment) -> Equipment:
