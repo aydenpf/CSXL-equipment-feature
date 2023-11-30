@@ -54,6 +54,7 @@ class StagedCheckoutRequestEntity(EntityBase):
             Model: the model (not yet persisted)
         """
         return StagedCheckoutRequest(
+            id = self.id,
             user_name=self.user_name,
             pid=self.pid,
             selected_id=self.selected_id,

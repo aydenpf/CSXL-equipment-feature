@@ -14,6 +14,7 @@ class StagedCheckoutRequest(BaseModel):
     of the `StagedCheckoutRequest` database in the PostgreSQL database.
     """
     
+    id: int
     user_name: str
     pid: int
     selected_id: int 
