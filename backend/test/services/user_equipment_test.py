@@ -531,7 +531,7 @@ def test_create_checkout_does_not_add_inactive_checkout_to_active_checkouts(
     assert fetched_checkouts[1] == checkouts[1]
 
 
-def test_create_checkout_not_authorozed(equipment_service: EquipmentService):
+def test_create_checkout_not_authorized(equipment_service: EquipmentService):
     """Tests that checkout cannot be created when the user does not have ambassador permissions"""
 
     to_add = EquipmentCheckout(
