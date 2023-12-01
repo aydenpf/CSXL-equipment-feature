@@ -347,7 +347,7 @@ class EquipmentService:
 
         # enforce ambasssador permission
         self._permission.enforce(
-            subject, "equipment.get_all_requests", resource="equipment"
+            subject, "equipment.get_all_staged_requests", resource="equipment"
         )
 
         # create the query for getting all equipment checkout request entities.

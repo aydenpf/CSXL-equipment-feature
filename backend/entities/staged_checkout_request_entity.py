@@ -12,7 +12,7 @@ class StagedCheckoutRequestEntity(EntityBase):
     
     __tablename__ = "staged_checkout_requests"
 
-    # Id to be used as the primary key for each staged request in the table.
+    # The id of the staged checkout request.
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     # User name of the user that is requesting a checkout.
     user_name: Mapped[str] = mapped_column(String)
@@ -37,6 +37,7 @@ class StagedCheckoutRequestEntity(EntityBase):
             Self: the entity (not yet persisted)
         """
         return cls(
+            id=model.id,
             user_name=model.user_name,
             pid=model.pid,
             selected_id=model.selected_id,
@@ -54,7 +55,7 @@ class StagedCheckoutRequestEntity(EntityBase):
             Model: the model (not yet persisted)
         """
         return StagedCheckoutRequest(
-            id = self.id,
+            id=self.id,
             user_name=self.user_name,
             pid=self.pid,
             selected_id=self.selected_id,
