@@ -138,13 +138,15 @@ export class AmbassadorEquipmentComponent implements OnInit {
 
   returnEquipment(checkout: EquipmentCheckoutModel) {
     // Calls proper API route to return an equipment checkout
-    this.equipmentService.returnCheckout(checkout).subscribe({
-      next: (value) => {
-        console.log('success');
-      },
-      error: (err) => console.log(err)
-    });
 
+    this.equipmentService.setCurrentCheckoutReturn(checkout);
+    // this.equipmentService.returnCheckout(checkout).subscribe({
+    //   next: (value) => {
+    //     console.log('success');
+    //   },
+    //   error: (err) => console.log(err)
+    // });
+    this.router.navigateByUrl('/equipment/ambassador/return');
     this.updateCheckoutTable();
     this.checkoutTable?.refreshTable();
   }

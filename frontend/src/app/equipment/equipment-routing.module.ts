@@ -4,11 +4,13 @@ import { UserEquipmentComponent } from './user-equipment/user-equipment.componen
 import { WaiverComponent } from './waiver/waiver.component';
 import { EquipmentCheckoutConfirmationComponent } from './equipment-checkout-confirmation/equipment-checkout-confirmation.component';
 import { AmbassadorEquipmentComponent } from './ambassador-equipment/ambassador-equipment.component';
+import { EquipmentReturnComponent } from './equipment-return/equipment-return.component';
 const routes: Routes = [
   UserEquipmentComponent.Route,
   WaiverComponent.Route,
   EquipmentCheckoutConfirmationComponent.Route,
-  AmbassadorEquipmentComponent.Route
+  AmbassadorEquipmentComponent.Route,
+  EquipmentReturnComponent.Route
 ];
 
 @NgModule({

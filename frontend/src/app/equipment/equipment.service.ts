@@ -12,6 +12,7 @@ import { EquipmentCheckoutModel } from './equipment-checkout.model';
 export class EquipmentService {
   private profile: Profile | undefined;
   private profileSubscription!: Subscription;
+  private currentCheckoutReturn: EquipmentCheckoutModel | undefined;
 
   constructor(
     private http: HttpClient,
@@ -176,5 +177,17 @@ export class EquipmentService {
       '/api/equipment/return_checkout',
       checkout
     );
+  }
+
+  /**
+   * setter for currentCheckoutReturn field
+   * @param checkout the checkout object that will be checked back in (returned)
+   */
+  setCurrentCheckoutReturn(checkout: EquipmentCheckoutModel) {
+    this.currentCheckoutReturn = checkout;
+  }
+
+  getCurrentCheckoutReturn(): EquipmentCheckoutModel {
+    return this.currentCheckoutReturn!;
   }
 }
