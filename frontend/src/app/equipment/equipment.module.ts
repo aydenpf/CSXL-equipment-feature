@@ -22,6 +22,7 @@ import { CheckoutRequestCard } from './widgets/checkout-request-card/checkout-re
 import { MatTableModule } from '@angular/material/table';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { StageCard } from './widgets/staged-checkout-request-card/staged-checkout-request-card.widget';
+import { EquipmentReturnComponent } from './equipment-return/equipment-return.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { StageCard } from './widgets/staged-checkout-request-card/staged-checkou
     EquipmentCheckoutConfirmationComponent,
     AmbassadorEquipmentComponent,
     CheckoutRequestCard,
-    StageCard
+    StageCard,
+    EquipmentReturnComponent
   ],
   imports: [
     CommonModule,
