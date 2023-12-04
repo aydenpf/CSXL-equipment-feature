@@ -13,11 +13,13 @@ Usage: python3 -m script.reset_demo
 import sys
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
+from ..test.services.equipment import user_equipment_data
 from ..database import engine
 from ..env import getenv
 from .. import entities
 
-from ..test.services import role_data, user_data, permission_data, user_equipment_data
+from ..test.services import role_data, user_data, permission_data
 from ..test.services.organization import organization_demo_data
 from ..test.services.event import event_demo_data
 

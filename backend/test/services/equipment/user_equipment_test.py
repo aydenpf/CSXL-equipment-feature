@@ -8,15 +8,15 @@ from backend.models.equipment_checkout import EquipmentCheckout
 
 from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 from backend.models.user import User
-from .reset_table_id_seq import reset_table_id_seq
+from ..reset_table_id_seq import reset_table_id_seq
 from backend.entities.role_entity import RoleEntity
 from backend.models.equipment_type import EquipmentType
 from backend.models.role import Role
 from backend.services.exceptions import (
     UserPermissionException,
 )
-from ...models.equipment import Equipment
-from ...services.equipment import (
+from ....models.equipment import Equipment
+from ....services.equipment import (
     DuplicateEquipmentCheckoutRequestException,
     EquipmentAlreadyCheckedOutException,
     EquipmentCheckoutNotFoundException,
@@ -25,7 +25,7 @@ from ...services.equipment import (
     EquipmentNotFoundException,
     WaiverNotSignedException,
 )
-from ...services.user import UserService
+from ....services.user import UserService
 import pytest
 from sqlalchemy.orm import Session
 
@@ -36,7 +36,7 @@ from .user_equipment_data import (
     insert_fake_data,
     checkouts,
 )
-from .user_data import user, ambassador
+from ..user_data import user, ambassador
 
 
 @pytest.fixture(autouse=True)
@@ -410,6 +410,7 @@ def test_update_wavier_signed_field_user_not_found(equipment_service: EquipmentS
     except Exception as e:
         assert True
 
+
 def test_get_all_staged_requests(equipment_service: EquipmentService):
     """Tests that get_all_staged_requests returns the correct staged requests"""
 
@@ -501,6 +502,7 @@ def test_delete_staged_request_not_found(equipment_service: EquipmentService):
         equipment_service.delete_staged_request(ambassador, to_delete)
     except Exception as e:
         assert True
+
 
 def test_get_all_active_checkouts(equipment_service: EquipmentService):
     """Tests that get_all_active_checkouts returns the correct checkouts"""

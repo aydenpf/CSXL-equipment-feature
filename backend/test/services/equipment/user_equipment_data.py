@@ -1,4 +1,4 @@
-"""Mock data for equipment.
+"""Mock data for equipment testing.
 
 """
 
@@ -18,10 +18,10 @@ from datetime import datetime
 from backend.models.permission import Permission
 from backend.models.user import User
 from backend.test.services.role_data import ambassador_role
-from .reset_table_id_seq import reset_table_id_seq
-from ...entities.equipment_entity import EquipmentEntity
-from ...models.equipment import Equipment
-from ...models.equipment_checkout import EquipmentCheckout
+from ..reset_table_id_seq import reset_table_id_seq
+from ....entities.equipment_entity import EquipmentEntity
+from ....models.equipment import Equipment
+from ....models.equipment_checkout import EquipmentCheckout
 from enum import Enum
 
 
