@@ -410,6 +410,97 @@ def test_update_wavier_signed_field_user_not_found(equipment_service: EquipmentS
     except Exception as e:
         assert True
 
+def test_get_all_staged_requests(equipment_service: EquipmentService):
+    """Tests that get_all_staged_requests returns the correct staged requests"""
+
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    fetched_requests = equipment_service.get_all_staged_requests(ambassador)
+
+    equipment_service._permission.enforce.assert_called_with(
+        ambassador, "equipment.get_all_staged_requests", "equipment"
+    )
+
+    assert len(fetched_requests) == 2
+
+
+def test_create_staged_request(equipment_service: EquipmentService):
+    """Tests that create_staged_request can create a new staged request"""
+
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    stage = StagedCheckoutRequest(
+        user_name="Lebron James", model="equipment", pid=232323232, id_choices=[1]
+    )
+
+    stage = equipment_service.create_staged_request(ambassador, stage)
+
+    equipment_service._permission.enforce.assert_called_with(
+        ambassador, "equipment.update", "equipment"
+    )
+
+    assert isinstance(stage, StagedCheckoutRequest)
+
+
+def test_create_staged_request_not_authorized(equipment_service: EquipmentService):
+    """Tests that staged request cannot be created when the user does not have ambassador permissions"""
+
+    stage = StagedCheckoutRequest(
+        user_name="Lebron James", model="equipment", pid=232323232, id_choices=[1]
+    )
+
+    try:
+        equipment_service.create_staged_request(user, stage)
+        pytest.fail()
+    except Exception as e:
+        assert True
+
+
+def test_delete_staged_request(equipment_service: EquipmentService):
+    """Tests that delete_staged_request properly deletes a staged request"""
+
+    to_delete = StagedCheckoutRequest(
+        user_name="Sally Student", model="equipment", pid=111111111, id_choices=[5]
+    )
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    equipment_service.delete_staged_request(ambassador, to_delete)
+
+    equipment_service._permission.enforce.assert_called_with(
+        ambassador, "equipment.update", "equipment"
+    )
+
+    requests = equipment_service.get_all_staged_requests(ambassador)
+
+    assert len(requests) == 1
+
+
+def test_delete_staged_request_not_authorized(equipment_service: EquipmentService):
+    """Tests that a staged request cannot be deleted when the user does not have ambassador permissions"""
+    to_delete = StagedCheckoutRequest(
+        user_name="Sally Student", model="equipment", pid=111111111, id_choices=[5]
+    )
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    try:
+        equipment_service.delete_staged_request(user, to_delete)
+    except Exception as e:
+        assert True
+
+
+def test_delete_staged_request_not_found(equipment_service: EquipmentService):
+    """Tests that a StagedCheckoutRequestNotFoundException is thrown"""
+
+    equipment_service._permission = create_autospec(equipment_service._permission)
+
+    to_delete = StagedCheckoutRequest(
+        user_name="Lebron James", model="equipment", pid=232323232, id_choices=[1]
+    )
+
+    try:
+        equipment_service.delete_staged_request(ambassador, to_delete)
+    except Exception as e:
+        assert True
 
 def test_get_all_active_checkouts(equipment_service: EquipmentService):
     """Tests that get_all_active_checkouts returns the correct checkouts"""
@@ -684,98 +775,5 @@ def test_return_checkout_not_authorized(equipment_service: EquipmentService):
     try:
         equipment_service.return_checkout(checkouts[1], user)
         pytest.fail()
-    except Exception as e:
-        assert True
-
-
-def test_get_all_staged_requests(equipment_service: EquipmentService):
-    """Tests that get_all_staged_requests returns the correct staged requests"""
-
-    equipment_service._permission = create_autospec(equipment_service._permission)
-
-    fetched_requests = equipment_service.get_all_staged_requests(ambassador)
-
-    equipment_service._permission.enforce.assert_called_with(
-        ambassador, "equipment.get_all_staged_requests", "equipment"
-    )
-
-    assert len(fetched_requests) == 2
-
-
-def test_create_staged_request(equipment_service: EquipmentService):
-    """Tests that create_staged_request can create a new staged request"""
-
-    equipment_service._permission = create_autospec(equipment_service._permission)
-
-    stage = StagedCheckoutRequest(
-        user_name="Lebron James", model="equipment", pid=232323232, id_choices=[1]
-    )
-
-    stage = equipment_service.create_staged_request(ambassador, stage)
-
-    equipment_service._permission.enforce.assert_called_with(
-        ambassador, "equipment.update", "equipment"
-    )
-
-    assert isinstance(stage, StagedCheckoutRequest)
-
-
-def test_create_staged_request_not_authorized(equipment_service: EquipmentService):
-    """Tests that staged request cannot be created when the user does not have ambassador permissions"""
-
-    stage = StagedCheckoutRequest(
-        user_name="Lebron James", model="equipment", pid=232323232, id_choices=[1]
-    )
-
-    try:
-        equipment_service.create_staged_request(user, stage)
-        pytest.fail()
-    except Exception as e:
-        assert True
-
-
-def test_delete_staged_request(equipment_service: EquipmentService):
-    """Tests that delete_staged_request properly deletes a staged request"""
-
-    to_delete = StagedCheckoutRequest(
-        user_name="Sally Student", model="equipment", pid=111111111, id_choices=[5]
-    )
-    equipment_service._permission = create_autospec(equipment_service._permission)
-
-    equipment_service.delete_staged_request(ambassador, to_delete)
-
-    equipment_service._permission.enforce.assert_called_with(
-        ambassador, "equipment.update", "equipment"
-    )
-
-    requests = equipment_service.get_all_staged_requests(ambassador)
-
-    assert len(requests) == 1
-
-
-def test_delete_staged_request_not_authorized(equipment_service: EquipmentService):
-    """Tests that a staged request cannot be deleted when the user does not have ambassador permissions"""
-    to_delete = StagedCheckoutRequest(
-        user_name="Sally Student", model="equipment", pid=111111111, id_choices=[5]
-    )
-    equipment_service._permission = create_autospec(equipment_service._permission)
-
-    try:
-        equipment_service.delete_staged_request(user, to_delete)
-    except Exception as e:
-        assert True
-
-
-def test_delete_staged_request_not_found(equipment_service: EquipmentService):
-    """Tests that a StagedCheckoutRequestNotFoundException is thrown"""
-
-    equipment_service._permission = create_autospec(equipment_service._permission)
-
-    to_delete = StagedCheckoutRequest(
-        user_name="Lebron James", model="equipment", pid=232323232, id_choices=[1]
-    )
-
-    try:
-        equipment_service.delete_staged_request(ambassador, to_delete)
     except Exception as e:
         assert True
