@@ -105,7 +105,6 @@ class EquipmentService:
         # convert the query results into 'Equipment' models and return as a list
         return [result.to_model() for result in query_result]
 
-    # TODO: add param for user and save users pid in equipments list of pids
     def update(self, item: Equipment, subject: User) -> Equipment:
         """
         updates a specific equipment item.
@@ -123,7 +122,7 @@ class EquipmentService:
         """
 
         # ensure user has ambassador permissions
-        self._permission.enforce(subject, "equipment.update", "equipment")
+        self._permission.enforce(subject, "equipment.crud.checkout", "equipment")
 
         # get item with matching equipment_id from db
         query = select(EquipmentEntity).where(
@@ -156,7 +155,7 @@ class EquipmentService:
             equipment id
         """
         # ensure user has ambassador permissions
-        self._permission.enforce(subject, "equipment.update", "equipment")
+        self._permission.enforce(subject, "equipment.view.checkout", "equipment")
 
         # get item with matching equipment_id from db
         query = select(EquipmentEntity).where(EquipmentEntity.equipment_id == id)
@@ -272,7 +271,7 @@ class EquipmentService:
         """
 
         self._permission.enforce(
-            subject, "equipment.delete_request", resource="equipment"
+            subject, "equipment.crud.checkout", resource="equipment"
         )
         # find object to delete
         obj = (
@@ -297,7 +296,7 @@ class EquipmentService:
         """Return a list of all equipment checkout requests in the db"""
         # enforce ambasssador permission
         self._permission.enforce(
-            subject, "equipment.get_all_requests", resource="equipment"
+            subject, "equipment.view.checkout", resource="equipment"
         )
         # create the query for getting all equipment checkout request entities.
         query = select(EquipmentCheckoutRequestEntity)
@@ -308,11 +307,6 @@ class EquipmentService:
 
     def get_equipment_for_request(self, subject: User, model: str) -> list[Equipment]:
         """returns a list of all available equipment corresponding to the checkout request's model"""
-
-        # enforce ambassador permission
-        self._permission.enforce(
-            subject, "equipment.get_equipment_for_request", "equipment"
-        )
 
         # query for all equipment that matches the checkout request model type AND is not checked out
         query = select(EquipmentEntity).where(
@@ -349,7 +343,7 @@ class EquipmentService:
         """Return a list of all staged checkout requests in the db"""
 
         # enforce ambasssador permission
-        self._permission.enforce(subject, "equipment.update", resource="equipment")
+        self._permission.enforce(subject, "equipment.view.checkout", resource="equipment")
 
         # create the query for getting all equipment checkout request entities.
         query = select(StagedCheckoutRequestEntity)
@@ -364,7 +358,7 @@ class EquipmentService:
         """Create a staged checkout request"""
 
         # enforce ambasssador permission
-        self._permission.enforce(subject, "equipment.update", resource="equipment")
+        self._permission.enforce(subject, "equipment.crud.checkout", resource="equipment")
 
         # set id_choices field to ids of available equipment
         staged_request.id_choices = [
@@ -390,7 +384,7 @@ class EquipmentService:
         """Delete a staged checkout request"""
 
         # enforce ambasssador permission
-        self._permission.enforce(subject, "equipment.update", resource="equipment")
+        self._permission.enforce(subject, "equipment.crud.checkout", resource="equipment")
 
         # find stage request entity to delete
         staged_entity = (
@@ -418,7 +412,7 @@ class EquipmentService:
             An array of all EquipmentCheckouts, as models, that are "active"
         """
         self._permission.enforce(
-            subject, "equipment.get_all_active_checkouts", "equipment"
+            subject, "equipment.view.checkout", "equipment"
         )
         # Create the query for getting all equipment checkout entities.
         query = select(EquipmentCheckoutEntity).where(
@@ -447,7 +441,7 @@ class EquipmentService:
             EquipmentAlreadyCheckedOutException if the equipment already has an active
             checkout associated with it
         """
-        self._permission.enforce(subject, "equipment.create_checkout", "equipment")
+        self._permission.enforce(subject, "equipment.crud.checkout", "equipment")
 
         equipment_checkout_entity = EquipmentCheckoutEntity.from_model(checkout)
 
@@ -491,7 +485,7 @@ class EquipmentService:
         """
         # enforce authorization
         # TODO add method specific permission
-        self._permission.enforce(subject, "equipment.create_checkout", "equipment")
+        self._permission.enforce(subject, "equipment.crud.checkout", "equipment")
         # ensure that checkout is active
         if not checkout.is_active:
             raise Exception("The equipment you are trying to return is not checked out")
