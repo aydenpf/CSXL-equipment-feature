@@ -14,6 +14,8 @@ import sys
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from backend.test.services.equipment import user_equipment_demo_data
+
 from ..test.services.equipment import user_equipment_data
 from ..database import engine
 from ..env import getenv
@@ -53,7 +55,7 @@ with Session(engine) as session:
     room_data.insert_fake_data(session)
     seat_data.insert_fake_data(session)
     reservation_data.insert_fake_data(session, time)
-    user_equipment_data.insert_fake_data(session)
+    user_equipment_demo_data.insert_fake_data(session)
 
     # Commit changes to the database
     session.commit()

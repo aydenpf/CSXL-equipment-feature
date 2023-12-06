@@ -2,15 +2,23 @@
 
 """
 
-__authors__ = ["Nicholas Mountain, Jacob Brown, Ayden Franklin"]
+from enum import Enum
+import pytest
+from sqlalchemy.orm import Session
+from backend.entities.equipment_entity import EquipmentEntity
+from backend.entities.permission_entity import PermissionEntity
+from backend.models.equipment import Equipment
+from backend.models.permission import Permission
+from backend.test.services.reset_table_id_seq import reset_table_id_seq
+from backend.test.services.role_data import ambassador_role
+
+
+__authors__ = ["Ayden Franklin"]
 __copyright__ = "Copyright 2023"
 __license__ = "MIT"
 
-from enum import Enum
 
-from backend.models.equipment import Equipment
-
-
+# enum storing png images for each equipment type
 class DeviceType(Enum):
     META_QUEST_3 = "https://s7d1.scene7.com/is/image/dmqualcommprod/meta-quest-3-1?$QC_Responsive$&fmt=png-alpha"
 
@@ -18,9 +26,9 @@ class DeviceType(Enum):
         "https://www.circuitbasics.com/wp-content/uploads/2020/05/Arduino-Uno.png"
     )
 
-    IPAD_AIR = "https://w7.pngwing.com/pngs/40/500/png-transparent-ipad-air-ipad-2-ipad-4-macbook-air-others-gadget-electronics-ipad-mini.png"
+    IPAD_AIR = "https://www.stmgoods.com/wp-content/uploads/STM22-Studio-MultiFit-iPad-Air-5th-gen-Pro-3rd-gen-Black-Quarter-Front.png"
 
-    ANDROID = "https://w7.pngwing.com/pngs/574/270/png-transparent-android-figurine-illustration-android-application-software-android-logo-logo-mobile-app-development-android-software-development.png"
+    ANDROID = "https://www.pngmart.com/files/13/Android-Logo-PNG-Transparent-Image.png"
 
 
 # Create all the equipment for the demo
@@ -87,7 +95,7 @@ arduino_3 = Equipment(
 
 ipad_1 = Equipment(
     equipment_id=7,
-    model="Arduino Uno",
+    model="Ipad",
     equipment_image=DeviceType.IPAD_AIR.value,
     condition=10,
     is_checked_out=False,
@@ -97,7 +105,7 @@ ipad_1 = Equipment(
 
 ipad_2 = Equipment(
     equipment_id=8,
-    model="Arduino Uno",
+    model="Ipad",
     equipment_image=DeviceType.IPAD_AIR.value,
     condition=10,
     is_checked_out=False,
@@ -107,7 +115,7 @@ ipad_2 = Equipment(
 
 ipad_3 = Equipment(
     equipment_id=9,
-    model="Arduino Uno",
+    model="Ipad",
     equipment_image=DeviceType.IPAD_AIR.value,
     condition=10,
     is_checked_out=False,
@@ -117,7 +125,7 @@ ipad_3 = Equipment(
 
 android_1 = Equipment(
     equipment_id=10,
-    model="Arduino Uno",
+    model="Android",
     equipment_image=DeviceType.ANDROID.value,
     condition=10,
     is_checked_out=False,
@@ -127,10 +135,68 @@ android_1 = Equipment(
 
 android_2 = Equipment(
     equipment_id=11,
-    model="Arduino Uno",
+    model="Android",
     equipment_image=DeviceType.ANDROID.value,
     condition=10,
     is_checked_out=False,
     condition_notes=[],
     checkout_history=[],
 )
+
+# create permissions for the demo
+
+ambassador_permission_crud_checkout = Permission(
+    id=4, action="equipment.crud.checkout", resource="equipment"
+)
+
+ambassador_permission_view_checkout = Permission(
+    id=5, action="equipment.view.checkout", resource="equipment"
+)
+
+equipment = [
+    quest3_1,
+    quest3_2,
+    quest3_3,
+    arduino_1,
+    arduino_2,
+    arduino_3,
+    ipad_1,
+    ipad_2,
+    ipad_3,
+    android_1,
+    android_2,
+]
+
+permissions = [ambassador_permission_crud_checkout, ambassador_permission_view_checkout]
+
+
+def insert_fake_data(session: Session):
+    global equipment
+
+    # insert equipment entities into the demo
+    equipment_entities = []
+    for item in equipment:
+        entity = EquipmentEntity.from_model(item)
+        session.add(entity)
+        equipment_entities.append(entity)
+
+    # insert permission entities into the demo
+    permission_entities = []
+    for i in range(0, len(permissions)):
+        entity = PermissionEntity(
+            id=permissions[i].id,
+            role_id=ambassador_role.id,
+            action=permissions[i].action,
+            resource=permissions[i].resource,
+        )
+        session.add(entity)
+        permission_entities.append(entity)
+
+    # reset table IDs to prevent ID conflicts
+    reset_table_id_seq(session, EquipmentEntity, EquipmentEntity.id, len(equipment) + 1)
+    reset_table_id_seq(
+        session, PermissionEntity, PermissionEntity.id, len(permissions) + 1
+    )
+
+    # commit the demo data
+    session.commit()

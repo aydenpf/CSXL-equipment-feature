@@ -16,7 +16,6 @@ from backend.models.equipment_checkout_request import EquipmentCheckoutRequest
 from datetime import datetime
 
 from backend.models.permission import Permission
-from backend.models.user import User
 from backend.test.services.role_data import ambassador_role
 from ..reset_table_id_seq import reset_table_id_seq
 from ....entities.equipment_entity import EquipmentEntity
@@ -133,28 +132,12 @@ staged_checkout_request_arduino = StagedCheckoutRequest(
     user_name="Rhonda Root", model="Arduino Uno", pid=999999999, id_choices=[2]
 )
 
-ambassador_permission_equipment = Permission(
-    id=4, action="equipment.update", resource="equipment"
+ambassador_permission_crud_checkout = Permission(
+    id=4, action="equipment.crud.checkout", resource="equipment"
 )
 
-ambassador_permission_delete_checkout_request = Permission(
-    id=5, action="equipment.delete_request", resource="equipment"
-)
-
-ambassador_permission_get_all_requests = Permission(
-    id=6, action="equipment.get_all_requests", resource="equipment"
-)
-
-ambassador_permission_get_all_requested = Permission(
-    id=7, action="equipment.get_equipment_for_request", resource="equipment"
-)
-
-ambassador_permission_get_all_active_checkouts = Permission(
-    id=8, action="equipment.get_all_active_checkouts", resource="equipment"
-)
-
-ambassador_permission_create_checkout = Permission(
-    id=9, action="equipment.create_checkout", resource="equipment"
+ambassador_permission_view_checkout = Permission(
+    id=5, action="equipment.view.checkout", resource="equipment"
 )
 
 equipment_checkout1 = EquipmentCheckout(
@@ -217,14 +200,7 @@ equipment_checkout6 = EquipmentCheckout(
     end_at=datetime.now(),
 )
 
-permissions = [
-    ambassador_permission_equipment,
-    ambassador_permission_delete_checkout_request,
-    ambassador_permission_get_all_requests,
-    ambassador_permission_get_all_requested,
-    ambassador_permission_get_all_active_checkouts,
-    ambassador_permission_create_checkout,
-]
+permissions = [ambassador_permission_crud_checkout, ambassador_permission_view_checkout]
 
 equipment = [
     quest_3,
