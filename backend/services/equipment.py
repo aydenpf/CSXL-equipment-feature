@@ -231,12 +231,12 @@ class EquipmentService:
             WaiverNotSignedException if the user has not signed the liability waiver.
         """
 
-        # check if the user has signed the liability waiver
+        # Check if the user has signed the liability waiver.
         if not user.signed_equipment_wavier:
             raise WaiverNotSignedException
 
-        # check if the user has already submitted a checkout request for the same type of equipment
-        obj = (
+        # Check if the user has already submitted a checkout request for the same type of equipment.
+        priorCheckoutRequest = (
             self._session.query(EquipmentCheckoutRequestEntity)
             .filter(
                 EquipmentCheckoutRequestEntity.model == request.model,
@@ -245,8 +245,28 @@ class EquipmentService:
             .one_or_none()
         )
 
+        # Check if the user has already submitted a staged request for the same type of equipment. 
+        priorStagedRequest = (
+            self._session.query(StagedCheckoutRequestEntity)
+            .filter(
+                StagedCheckoutRequestEntity.model == request.model,
+                StagedCheckoutRequestEntity.pid == request.pid
+            )
+            .one_or_none()
+        )
+
+        # Check if the user already has a checkout. 
+        priorCheckout = (
+            self._session.query(EquipmentCheckoutEntity)
+            .filter(
+                EquipmentCheckoutEntity.model == request.model,
+                EquipmentCheckoutEntity.pid == request.pid
+            )
+            .one_or_none()
+        )
+
         # if the user is trying to send a duplicate request, raise exception
-        if obj:
+        if priorCheckoutRequest or priorStagedRequest or priorCheckout: 
             raise DuplicateEquipmentCheckoutRequestException(request.model)
 
         # create new object

@@ -378,11 +378,24 @@ def test_add_request(equipment_service: EquipmentService):
     """Tests adding a request properly creates and adds equipment request"""
 
     request = EquipmentCheckoutRequest(
-        user_name="Kris", model="Meta Quest 3", pid=123456789
+        user_name="Kris", model="Meta Quest 3", pid=222222222
     )
 
     request = equipment_service.add_request(request, ambassador)
     assert isinstance(request, EquipmentCheckoutRequest)
+
+def test_add_request_while_staged_request_exists(equipment_service: EquipmentService):
+    """Tests that a user cannot add a checkout request if they already have a staged request."""
+
+    req = EquipmentCheckoutRequest(
+        user_name="baller", model="Arduino Uno", pid=999999999
+    )
+
+    try: 
+        equipment_service.add_request(req, ambassador)
+        assert False
+    except DuplicateEquipmentCheckoutRequestException as e:
+        assert True
 
 
 def test_update_wavier_signed_field_unsigned(equipment_service: EquipmentService):

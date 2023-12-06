@@ -116,9 +116,9 @@ arduino6 = Equipment(
     checkout_history=[],
 )
 
-checkout_request_quest_3 = EquipmentCheckoutRequest(
-    user_name="Sally Student", model="Meta Quest 3", pid=111111111
-)
+# checkout_request_quest_3 = EquipmentCheckoutRequest(
+#     user_name="Sally Student", model="Meta Quest 3", pid=111111111
+# )
 
 checkout_request_arduino = EquipmentCheckoutRequest(
     user_name="Rhonda Root", model="Arduino Uno", pid=999999999
@@ -213,7 +213,7 @@ equipment = [
     arduino6,
 ]
 
-checkout_requests = [checkout_request_quest_3, checkout_request_arduino]
+checkout_requests = [checkout_request_arduino]
 
 staged_requests = [staged_checkout_request_quest_3, staged_checkout_request_arduino]
 
