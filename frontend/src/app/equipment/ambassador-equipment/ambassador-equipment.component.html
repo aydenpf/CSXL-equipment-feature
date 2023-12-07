@@ -20,7 +20,7 @@
       </ng-template>
     </div>
 
-    <div>
+    <div class="staged-request-container">
       <staged-checkout-request-card
         *ngIf="
           stagedCheckoutRequestsLength && stagedCheckoutRequestsLength >= 1;
@@ -43,7 +43,7 @@
     </div>
   </mat-tab>
   <mat-tab label="Current Checkouts">
-    <div>
+    <div class="checkout-container">
       <equipment-checkout-card
         *ngIf="checkoutsLength && checkoutsLength >= 1; else noCheckouts"
         [checkouts]="equipmentCheckouts$"
