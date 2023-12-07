@@ -28,9 +28,7 @@ class DeviceType(Enum):
 
     IPAD_AIR = "https://www.stmgoods.com/wp-content/uploads/STM22-Studio-MultiFit-iPad-Air-5th-gen-Pro-3rd-gen-Black-Quarter-Front.png"
 
-    ANDROID = (
-        "https://www.pngall.com/wp-content/uploads/13/Samsung-Galaxy-PNG-File.png`"
-    )
+    ANDROID = "https://image-us.samsung.com/SamsungUS/home/mobile/phones/pdp/galaxy-s21-fe-5g/gallery/SM-G990U-graphite-1.png"
 
 
 # Create all the equipment for the demo
