@@ -126,7 +126,6 @@ export class AmbassadorEquipmentComponent implements OnInit {
     });
     let user_name = request.user_name;
     let model = request.model;
-    let selected_id = undefined;
     let pid = request.pid;
     let stagedRequest: StagedCheckoutRequestModel = {
       user_name: user_name,
@@ -137,7 +136,9 @@ export class AmbassadorEquipmentComponent implements OnInit {
     };
     this.equipmentService.approveRequest(stagedRequest).subscribe({
       next: () => {
-        this.cancelRequest(request);
+        this.equipmentService
+          .deleteRequest(request)
+          .subscribe(() => this.updateCheckoutRequestsTable());
         this.updateStagedCheckoutTable();
         this.updateCheckoutRequestsTable();
       },
