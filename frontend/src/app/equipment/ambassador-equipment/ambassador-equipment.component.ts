@@ -19,11 +19,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./ambassador-equipment.component.css']
 })
 export class AmbassadorEquipmentComponent implements OnInit {
+  /** Route information to be used in App Routing Module */
   public static Route: Route = {
     path: 'ambassador',
     component: AmbassadorEquipmentComponent,
     title: 'XL Equipment',
-    canActivate: [permissionGuard('equipment.update', 'equipment')],
+    canActivate: [permissionGuard('equipment.view.checkout', 'equipment')],
     resolve: { profile: profileResolver }
   };
 
@@ -46,29 +47,14 @@ export class AmbassadorEquipmentComponent implements OnInit {
     protected snackBar: MatSnackBar
   ) {
     this.checkoutRequests$ = equipmentService.getAllRequest();
-    this.getCheckoutRequestLength();
+    this.setCheckoutRequestsLength();
     this.stagedCheckoutRequests$ = equipmentService.getAllStagedCheckouts();
-    this.getStagedCheckoutLength();
-    this.equipmentCheckouts$ = equipmentService.get_all_active_checkouts().pipe(
-      map((checkouts) => {
-        checkouts.forEach((checkout) => {
-          checkout.end_at = new Date(checkout.end_at);
-        });
-        return checkouts;
-      })
-    );
-    this.getCheckoutsLength();
-    this.stagedCheckoutRequests$.subscribe({
-      next: (value) => {
-        console.log(value);
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
+    this.setStagedCheckoutLength();
+    this.equipmentCheckouts$ = equipmentService.get_all_active_checkouts();
+    this.setCheckoutsLength();
   }
 
-  // every 5 seconds call the get all request service method to update ambassador equipment checkout page.
+  // Update checkoutRequestsTable every 5 seconds
   ngOnInit(): void {
     timer(0, 5000)
       .pipe(
@@ -79,34 +65,25 @@ export class AmbassadorEquipmentComponent implements OnInit {
       .subscribe();
   }
 
+  // Updates the checkoutRequestTable
   updateCheckoutRequestsTable() {
-    //updates the checkout request table
     this.checkoutRequests$ = this.equipmentService.getAllRequest();
-    this.getCheckoutRequestLength();
+    this.setCheckoutRequestsLength();
     this.requestTable?.refreshTable();
   }
 
+  // Updates the StagedCheckouts table
   updateStagedCheckoutTable() {
-    //updates the staged checkout request table
     this.stagedCheckoutRequests$ =
       this.equipmentService.getAllStagedCheckouts();
-    this.getStagedCheckoutLength();
+    this.setStagedCheckoutLength();
     this.stageTable?.refreshTable();
   }
 
+  // Updates the activeCheckouts table
   updateCheckoutTable() {
-    //updates the checkout table
-    this.equipmentCheckouts$ = this.equipmentService
-      .get_all_active_checkouts()
-      .pipe(
-        map((checkouts) => {
-          checkouts.forEach((checkout) => {
-            checkout.end_at = new Date(checkout.end_at);
-          });
-          return checkouts;
-        })
-      );
-    this.getCheckoutsLength();
+    this.equipmentCheckouts$ = this.equipmentService.get_all_active_checkouts();
+    this.setCheckoutsLength();
     this.checkoutTable?.refreshTable();
   }
 
@@ -126,8 +103,8 @@ export class AmbassadorEquipmentComponent implements OnInit {
     });
   }
 
+  // Calls deleteRequest service method to remove request from backend
   cancelRequest(request: CheckoutRequestModel) {
-    // Calls the proper API route to remove a request from checkout requests table in the backend.
     this.equipmentService
       .deleteRequest(request)
       .subscribe(() => this.updateCheckoutRequestsTable());
@@ -139,6 +116,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
     );
   }
 
+  // Approves a staged checkout calling service method; if successful, cancels the staged request and rerenders checkouts table
   approveStagedRequest(request: StagedCheckoutRequestModel) {
     // Calls the proper API route to move request into checkouts table in backend.
     this.equipmentService.create_checkout(request).subscribe({
@@ -155,6 +133,7 @@ export class AmbassadorEquipmentComponent implements OnInit {
     });
   }
 
+  // Cancels a staged request by deleting from database and rerendering staged requests table
   cancelStagedRequest(stagedRequest: StagedCheckoutRequestModel) {
     this.equipmentService.removeStagedCheckout(stagedRequest).subscribe({
       next: (value) => {
@@ -170,25 +149,26 @@ export class AmbassadorEquipmentComponent implements OnInit {
   }
 
   // Gets the length of the observable array of checkout request models.
-  getCheckoutRequestLength() {
+  setCheckoutRequestsLength() {
     this.checkoutRequests$.subscribe((array) => {
       this.checkoutRequestsLength = array.length;
     });
   }
 
-  //Gets the length of the observable array of staged checkout request models
-  getStagedCheckoutLength() {
+  // Gets the length of the observable array of staged checkout request models
+  setStagedCheckoutLength() {
     this.stagedCheckoutRequests$.subscribe((array) => {
       this.stagedCheckoutRequestsLength = array.length;
     });
   }
-  //Gets the length of the observable array of checkout models
-  getCheckoutsLength() {
+  // Gets the length of the observable array of checkout models
+  setCheckoutsLength() {
     this.equipmentCheckouts$.subscribe((array) => {
       this.checkoutsLength = array.length;
     });
   }
 
+  // Returns a piece of equipment by calling service method and rerendering if successful
   returnEquipment(checkout: EquipmentCheckoutModel) {
     // Calls proper API route to return an equipment checkout
     this.equipmentService.returnCheckout(checkout).subscribe({

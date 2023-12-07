@@ -8,7 +8,9 @@ import { Observable, Subscription, timer, tap } from 'rxjs';
   templateUrl: './user-equipment.component.html',
   styleUrls: ['./user-equipment.component.css']
 })
+
 export class UserEquipmentComponent implements OnInit {
+  
   public static Route = {
     path: '',
     title: 'User Equipment Checkout',
@@ -16,10 +18,9 @@ export class UserEquipmentComponent implements OnInit {
   };
 
   public equipmentTypes$: EquipmentType[] | undefined;
-  private subsrciption!: Subscription;
 
   constructor(public equipmentService: EquipmentService) {
-    this.subsrciption = equipmentService
+    equipmentService
       .getAllEquipmentTypes()
       .subscribe((equipment) => (this.equipmentTypes$ = equipment));
   }
