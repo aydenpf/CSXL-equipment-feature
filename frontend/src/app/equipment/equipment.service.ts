@@ -96,7 +96,27 @@ export class EquipmentService {
    * @param stagedRequest, staged request object created in ambassador component ts
    * @returns checkout request object
    */
-  approveRequest(stagedRequest: StagedCheckoutRequestModel) {
+  approveRequest(request: CheckoutRequestModel) {
+    let id_choices: Number[] = [];
+    let equipment_list = this.getAllEquipmentByModel(request.model);
+    equipment_list.subscribe({
+      next(equipment_arr) {
+        equipment_arr.forEach((item) => {
+          id_choices?.push(item.equipment_id);
+        });
+      }
+    });
+    let user_name = request.user_name;
+    let model = request.model;
+    let pid = request.pid;
+    let stagedRequest: StagedCheckoutRequestModel = {
+      user_name: user_name,
+      model: model,
+      id_choices: id_choices,
+      selected_id: null,
+      pid: pid
+    };
+
     return this.http.post<StagedCheckoutRequestModel>(
       'api/equipment/create_staged_request',
       stagedRequest

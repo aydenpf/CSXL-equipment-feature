@@ -110,31 +110,9 @@ export class AmbassadorEquipmentComponent implements OnInit {
     this.checkoutTable?.refreshTable();
   }
 
-  // TODO: move logic into service
   approveRequest(request: CheckoutRequestModel) {
     // Convert request into staged request.
-    let id_choices: Number[] = [];
-    let equipment_list = this.equipmentService.getAllEquipmentByModel(
-      request.model
-    );
-    equipment_list.subscribe({
-      next(equipment_arr) {
-        equipment_arr.forEach((item) => {
-          id_choices?.push(item.equipment_id);
-        });
-      }
-    });
-    let user_name = request.user_name;
-    let model = request.model;
-    let pid = request.pid;
-    let stagedRequest: StagedCheckoutRequestModel = {
-      user_name: user_name,
-      model: model,
-      id_choices: id_choices,
-      selected_id: null,
-      pid: pid
-    };
-    this.equipmentService.approveRequest(stagedRequest).subscribe({
+    this.equipmentService.approveRequest(request).subscribe({
       next: () => {
         this.equipmentService
           .deleteRequest(request)
